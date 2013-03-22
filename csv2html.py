@@ -96,7 +96,10 @@ parser.add_argument('-s', '--start', metavar='N', help=
                     type=int, default=0, dest='nstart')
 parser.add_argument('-r', '--renumber', help=
                     'replace the first column with row numbers',
-                    action='store_true', dest='renum')
+                    action='store_true', default=False, dest='renum')
+parser.add_argument('-k', '--skip-header', help=
+                    'do not use the first row of the input as the header',
+                    action='store_true', default=False, dest='skipheader')
 
 args = parser.parse_args()
 
@@ -119,10 +122,12 @@ try:
             csvreader = csv.reader(incsvfile, dialect='excel',
                                    delimiter=args.delim)
             n = 0  # row number counter
+            headerrow = not args.skipheader
 
             for row in csvreader:
-                if n == 0:
+                if headerrow:
                     tg.heading(row)
+                    headerrow = False
                 else:
                     if n > args.nstart:
                             if args.renum:
