@@ -23,7 +23,7 @@ UNKNOWN_ERROR = 127
 # Below are classes for interfacing with with different HTML output modules
 class TableGen(object):
     """Parent class for module-interfacing classes."""
-    
+
     def __init__(self, title="", completedoc=False):
         self.completedoc = completedoc
         self.html = None
@@ -76,6 +76,13 @@ class TableGenHtml(TableGen):
             else:
                 t = r.th
                 t.text('&nbsp;', escape=False)
+                
+    def __str__(self):
+        if self.completedoc:
+            return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" \
+"http://www.w3.org/TR/html4/strict.dtd">\n' + str(self.html)
+        else:
+            return str(self.table)                
 
     def add(self, row):
         r = self.table.tr
