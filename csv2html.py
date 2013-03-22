@@ -137,7 +137,11 @@ if usingHTMLgen:
     try:
         import HTMLgen
     except:
-        print "Couldn't import HTMLgen or html.\n\n\
+        if args.forcehtmlgen:
+            print "Forced to use HTMLgen but couldn't import it.\n\n\
+Please install HTMLgen."
+        else:
+            print "Couldn't import HTMLgen or html.\n\n\
 Please install either to use csv2html."
         exit(CANNOT_IMPORT_MODULES)
 
