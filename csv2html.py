@@ -20,7 +20,7 @@ CANNOT_IMPORT_MODULES = 3
 UNKNOWN_ERROR = 127
 
 
-# Below are classes for interfacing with with different HTML output modules
+# Below are classes for interfacing with different HTML output modules.
 class TableGen(object):
     """Parent class for module-interfacing classes."""
 
@@ -76,13 +76,13 @@ class TableGenHtml(TableGen):
             else:
                 t = r.th
                 t.text('&nbsp;', escape=False)
-                
+
     def __str__(self):
         if self.completedoc:
             return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" \
 "http://www.w3.org/TR/html4/strict.dtd">\n' + str(self.html)
         else:
-            return str(self.table)                
+            return str(self.table)
 
     def add(self, row):
         r = self.table.tr
@@ -94,6 +94,7 @@ class TableGenHtml(TableGen):
                 t.text('&nbsp;', escape=False)
 
 
+# Configure the command line argument parser.
 parser = argparse.ArgumentParser(description=
                                  'Converts CSV files into HTML tables')
 parser.add_argument('inputfile', help='input file',
