@@ -1,6 +1,9 @@
-# Converts CSV tables into HTML tables.
+#!/usr/bin/env python
+# This software converts CSV tables into HTML tables.
+# For best results install https://pypi.python.org/pypi/html.
+# See the files README.md and LICENSE for more information.
 # -- dbohdan 2013.03.22
-# For best results install https://pypi.python.org/pypi/html
+
 
 import csv
 import os
