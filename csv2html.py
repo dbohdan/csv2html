@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-# This software converts CSV tables into HTML tables.
-# For best results install https://pypi.python.org/pypi/html.
-# See the files README.md and LICENSE for more information.
 # --dbohdan 2013.03.23
+'''
+This module converts CSV files into HTML tables. It can be used as a standalone
+program or imported from your Python code.
 
+For best results install https://pypi.python.org/pypi/html.
+See the files README.md and LICENSE for more information.
+'''
 
 import csv
-import os
-import sys
 import argparse
 
 
@@ -22,7 +23,7 @@ UNKNOWN_ERROR = 127
 
 # Below are classes for interfacing with different HTML output modules.
 class TableGen(object):
-    """Parent class for module-interfacing classes."""
+    '''Parent class for module-interfacing classes.'''
 
     def __init__(self, title="", completedoc=False):
         self.completedoc = completedoc
@@ -37,7 +38,7 @@ class TableGen(object):
 
 
 class TableGenHTMLgen(TableGen):
-    """Interface for the module HTMLgen for generating tables."""
+    '''Interface for the module HTMLgen for generating tables.'''
 
     def __init__(self, title="", completedoc=False):
         super(TableGenHTMLgen, self).__init__(title, completedoc)
@@ -47,15 +48,18 @@ class TableGenHTMLgen(TableGen):
             self.html = HTMLgen.SimpleDocument(title=title)
             self.html.append(self.table)
 
-    def heading(self, h):
-        self.table.heading = row
+    def heading(self, hrow):
+        '''Specifies the table''s heading. This should be only called one
+        before any rows are added.'''
+        self.table.heading = hrow
 
     def add(self, row):
+        'Adds a row to the table; trow should be an iterable.'
         self.table.body.append([x if x != '' else '&nbsp;' for x in row])
 
 
 class TableGenHtml(TableGen):
-    """Interface for the module html for generating tables."""
+    '''Interface for the module html for generating tables.'''
 
     def __init__(self, title='', completedoc=False):
         super(TableGenHtml, self).__init__(title, completedoc)
@@ -68,14 +72,16 @@ class TableGenHtml(TableGen):
             self.html = html.HTML()
             self.table = self.html.table(border='1')
 
-    def heading(self, h):
-        r = self.table.tr
-        for item in row:
+    def heading(self, headerrow):
+        '''Specifies the table''s heading. This should be only called one
+        before any rows are added.'''
+        newtr = self.table.tr
+        for item in headerrow:
             if item != '':
-                r.th(item)
+                newtr.th(item)
             else:
-                t = r.th
-                t.text('&nbsp;', escape=False)
+                newth = newtr.th
+                newth.text('&nbsp;', escape=False)
 
     def __str__(self):
         if self.completedoc:
@@ -84,111 +90,147 @@ class TableGenHtml(TableGen):
         else:
             return str(self.table)
 
-    def add(self, row):
-        r = self.table.tr
-        for item in row:
+    def add(self, tablerow):
+        'Adds a row to the table; trow should be an iterable.'
+        newtr = self.table.tr
+        for item in tablerow:
             if item != '':
-                r.td(item)
+                newtr.td(item)
             else:
-                t = r.td
-                t.text('&nbsp;', escape=False)
+                newtd = newtr.td
+                newtd.text('&nbsp;', escape=False)
 
 
-# Configure the command line argument parser.
-parser = argparse.ArgumentParser(description=
-                                 'Converts CSV files into HTML tables')
-parser.add_argument('inputfile', help='input file',
-                    default='', metavar='input')
-parser.add_argument('-o', '--output', help='output file',
-                    default='', required=False, metavar='output',
-                    dest='outputfile')
-parser.add_argument('-t', '--title', help='document & table title',
-                    default='')
-parser.add_argument('-d', '--delimiter', help='field delimiter for CSV ("%s" \
-by default)' % DEFAULT_DELIMITER, default=DEFAULT_DELIMITER, dest='delim')
-parser.add_argument('-s', '--start', metavar='N', help=
-                    'skip the first N-1 rows, start with row N',
-                    type=int, default=0, dest='nstart')
-parser.add_argument('-r', '--renumber', help=
-                    'replace the first column with row numbers',
-                    action='store_true', default=False, dest='renum')
-parser.add_argument('-k', '--skip-header', help=
-                    'do not use the first row of the input as the header',
-                    action='store_true', default=False, dest='skipheader')
-parser.add_argument('-c', '--complete-document', help=
-                    'output the code for a complete HTML document instead of \
-only for the table', action='store_true', default=False, dest='completedoc')
-parser.add_argument('-g', '--force-htmlgen', help=
-                    'uses HTMLgen even if the html module is available',
-                    action='store_true', default=False, dest='forcehtmlgen')
+def convert_csv_to_html(inputstream, outputstream, title='', delim=';',
+                        nstart=0, skipheader=False, renum=False,
+                        completedoc=False, usehtmlgen=False):
+    '''
+    Takes CSV from inputstream (an iterable) and outputs an HTML table to
+    outputstream (anything with a write(s) method).
+    '''
 
-# Process command line arguments.
-args = parser.parse_args()
-
-if args.inputfile == '':
-    parser.print_help()
-    exit(NO_FILE_GIVEN)
-
-if args.outputfile == '':
-    args.outputfile = '/dev/stdout'
-
-# Import HTML output modules.
-usingHTMLgen = args.forcehtmlgen
-
-if not usingHTMLgen:
-    try:
-        import html
-    except:
-        usingHTMLgen = True
-
-if usingHTMLgen:
-    try:
+    # The imports below are necessary when calling this function from an
+    # external module. They do not hurt performance when csv2html is used as
+    # a standalone program.
+    if usehtmlgen:
+        global HTMLgen
         import HTMLgen
-    except:
-        if args.forcehtmlgen:
-            print "Forced to use HTMLgen but couldn't import it.\n\n\
-Please install HTMLgen."
+        tablegen = TableGenHTMLgen(title, completedoc)
+    else:
+        global html
+        import html
+        tablegen = TableGenHtml(title, completedoc)
+
+    # Read the CSV stream and output HTML.
+    csvreader = csv.reader(inputstream, dialect='excel',
+                           delimiter=delim)
+    nrow = 0  # row number counter
+    headerrow = not skipheader
+
+    for row in csvreader:
+        if headerrow:
+            tablegen.heading(row)
+            headerrow = False
         else:
-            print "Couldn't import HTMLgen or html.\n\n\
-Please install either to use csv2html."
-        exit(CANNOT_IMPORT_MODULES)
+            if nrow >= nstart:
+                if renum:
+                    row[0] = str(nrow - nstart +
+                                 int(skipheader or
+                                 nstart > 0))
+                                 # Adds 1 if true to correct for
+                                 # numbering rows from zero with no
+                                 # zeroth header row or subtracting
+                                 # nstart.
+                tablegen.add(row)
+        nrow += 1
 
-if usingHTMLgen:
-    tg = TableGenHTMLgen(args.title, args.completedoc)
-else:
-    tg = TableGenHtml(args.title, args.completedoc)
+    outputstream.write(str(tablegen))
 
-# Read the CSV file and output HTML.
-try:
-    with open(args.inputfile, 'rb') as incsvfile:
-        with open(args.outputfile, 'wb') as outhtmlfile:
-            csvreader = csv.reader(incsvfile, dialect='excel',
-                                   delimiter=args.delim)
-            n = 0  # row number counter
-            headerrow = not args.skipheader
 
-            for row in csvreader:
-                if headerrow:
-                    tg.heading(row)
-                    headerrow = False
-                else:
-                    if n >= args.nstart:
-                            if args.renum:
-                                row[0] = str(n - args.nstart +
-                                             int(args.skipheader or
-                                             args.nstart > 0))
-                                             # Adds 1 if true to correct for
-                                             # numbering rows from zero with no
-                                             # zeroth header row or subtracting
-                                             # args.nstart.
-                            tg.add(row)
-                n += 1
+def main():
+    '''
+    This function is called when the module is run as the main program.
+    It handles command line options and opening files for convert_csv_to_html.
+    '''
 
-            outhtmlfile.write(str(tg))
-except IOError as e:
-    print "I/O error({0}): {1}".format(e.errno, e.strerror)
-    exit(IO_ERROR)
-except Exception as e:
-    print "Unexpected error:", e
-    exit(UNKNOWN_ERROR)
+    # Configure the command line argument parser.
+    parser = argparse.ArgumentParser(description='Converts CSV files into \
+HTML tables')
+    parser.add_argument('inputfile', help='input file',
+                        default='', metavar='input')
+    parser.add_argument('-o', '--output', help='output file',
+                        default='', required=False, metavar='output',
+                        dest='outputfile')
+    parser.add_argument('-t', '--title', help='document & table title',
+                        default='')
+    parser.add_argument('-d', '--delimiter', help='field delimiter for CSV \
+("%s" by default)' % DEFAULT_DELIMITER, default=DEFAULT_DELIMITER,
+                        dest='delim')
+    parser.add_argument('-s', '--start', metavar='N', help=
+                        'skip the first N-1 rows, start with row N',
+                        type=int, default=0, dest='nstart')
+    parser.add_argument('-r', '--renumber', help=
+                        'replace the first column with row numbers',
+                        action='store_true', default=False, dest='renum')
+    parser.add_argument('-k', '--skip-header', help=
+                        'do not use the first row of the input as the header',
+                        action='store_true', default=False, dest='skipheader')
+    parser.add_argument('-c', '--complete-document', help=
+                        'output a complete HTML document instead of only the \
+    table', action='store_true', default=False, dest='completedoc')
+    parser.add_argument('-g', '--force-htmlgen', help=
+                        'uses HTMLgen even if the html module is available',
+                        action='store_true', default=False,
+                        dest='forcehtmlgen')
+
+    # Process command line arguments.
+    args = parser.parse_args()
+
+    if args.inputfile == '':
+        parser.print_help()
+        exit(NO_FILE_GIVEN)
+
+    if args.outputfile == '':
+        args.outputfile = '/dev/stdout'
+
+    # Import HTML output modules.
+    usinghtmlgen = args.forcehtmlgen
+
+    if not usinghtmlgen:
+        global html
+        try:
+            import html
+        except ImportError:
+            usinghtmlgen = True
+
+    if usinghtmlgen:  # Careful, do _not_ merge this with the above block.
+        global HTMLgen
+        try:
+            import HTMLgen
+        except ImportError:
+            if args.forcehtmlgen:
+                print "Forced to use HTMLgen but couldn't import it.\n\n\
+    Please install HTMLgen."
+            else:
+                print "Couldn't import HTMLgen or html.\n\n\
+    Please install either to use csv2html."
+            exit(CANNOT_IMPORT_MODULES)
+
+    try:
+        with open(args.inputfile, 'rb') as incsvfile:
+            with open(args.outputfile, 'wb') as outhtmlfile:
+                convert_csv_to_html(incsvfile, outhtmlfile, args.title,
+                                    args.delim, args.nstart, args.skipheader,
+                                    args.renum, args.completedoc,
+                                    usinghtmlgen)
+    except IOError as e:
+        print "I/O error({0}): {1}".format(e.errno, e.strerror)
+        exit(IO_ERROR)
+    except Exception as e:
+        print "Unexpected error:", e
+        exit(UNKNOWN_ERROR)
+
+
+if __name__ == '__main__':
+    main()
 
