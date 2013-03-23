@@ -7,6 +7,7 @@ program or imported from your Python code.
 For best results install https://pypi.python.org/pypi/html.
 See the files README.md and LICENSE for more information.
 '''
+from __future__ import print_function
 
 import csv
 import argparse
@@ -101,12 +102,12 @@ class TableGenHtml(TableGen):
                 newtd.text('&nbsp;', escape=False)
 
 
-def convert_csv_to_html(inputstream, outputstream, title='', delim=';',
-                        nstart=0, skipheader=False, renum=False,
-                        completedoc=False, usehtmlgen=False):
+def convert_csv_to_html(inputstream, outputstream, title='',
+                        delim=DEFAULT_DELIMITER, nstart=0, skipheader=False,
+                        renum=False, completedoc=False, usehtmlgen=False):
     '''
     Takes CSV from inputstream (an iterable) and outputs an HTML table to
-    outputstream (anything with a write(s) method).
+    outputstream (anything with a write method that takes a string).
     '''
 
     # The imports below are necessary when calling this function from an
@@ -172,7 +173,7 @@ HTML tables')
     parser.add_argument('-r', '--renumber', help=
                         'replace the first column with row numbers',
                         action='store_true', default=False, dest='renum')
-    parser.add_argument('-k', '--skip-header', help=
+    parser.add_argument('-n', '--no-header', help=
                         'do not use the first row of the input as the header',
                         action='store_true', default=False, dest='skipheader')
     parser.add_argument('-c', '--complete-document', help=
@@ -209,11 +210,11 @@ HTML tables')
             import HTMLgen
         except ImportError:
             if args.forcehtmlgen:
-                print "Forced to use HTMLgen but couldn't import it.\n\n\
-    Please install HTMLgen."
+                print("Forced to use HTMLgen but couldn't import it.\n\n\
+Please install HTMLgen.")
             else:
-                print "Couldn't import HTMLgen or html.\n\n\
-    Please install either to use csv2html."
+                print("Couldn't import HTMLgen or html.\n\n\
+Please install either to use csv2html.")
             exit(CANNOT_IMPORT_MODULES)
 
     try:
@@ -224,10 +225,10 @@ HTML tables')
                                     args.renum, args.completedoc,
                                     usinghtmlgen)
     except IOError as e:
-        print "I/O error({0}): {1}".format(e.errno, e.strerror)
+        print("I/O error({0}): {1}".format(e.errno, e.strerror))
         exit(IO_ERROR)
     except Exception as e:
-        print "Unexpected error:", e
+        print("Unexpected error:", e)
         exit(UNKNOWN_ERROR)
 
 
