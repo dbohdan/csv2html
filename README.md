@@ -26,7 +26,7 @@ Command line arguments
                             field delimiter for CSV (";" by default)
       -s N, --start N       skip the first N-1 rows, start with row N
       -r, --renumber        replace the first column with row numbers
-      -n, --no-header     do not use the first row of the input as the header
+      -n, --no-header       do not use the first row of the input as the header
       -c, --complete-document
                             output a complete HTML document instead of only the
                             table

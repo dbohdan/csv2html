@@ -11,15 +11,9 @@ from __future__ import print_function
 
 import csv
 import argparse
-
+import os
 
 DEFAULT_DELIMITER = ";"
-
-# Exit status constants
-NO_FILE_GIVEN = 1
-IO_ERROR = 2
-CANNOT_IMPORT_MODULES = 3
-UNKNOWN_ERROR = 127
 
 
 # Below are classes for interfacing with different HTML output modules.
@@ -189,7 +183,7 @@ HTML tables')
 
     if args.inputfile == '':
         parser.print_help()
-        exit(NO_FILE_GIVEN)
+        exit(ex.EX_NOINPUT)
 
     if args.outputfile == '':
         args.outputfile = '/dev/stdout'
@@ -215,7 +209,7 @@ Please install HTMLgen.")
             else:
                 print("Couldn't import HTMLgen or html.\n\n\
 Please install either to use csv2html.")
-            exit(CANNOT_IMPORT_MODULES)
+            exit(os.EX_UNAVAILABLE)
 
     try:
         with open(args.inputfile, 'rb') as incsvfile:
@@ -226,12 +220,11 @@ Please install either to use csv2html.")
                                     usinghtmlgen)
     except IOError as e:
         print("I/O error({0}): {1}".format(e.errno, e.strerror))
-        exit(IO_ERROR)
+        exit(os.EX_IOERR)
     except Exception as e:
         print("Unexpected error:", e)
-        exit(UNKNOWN_ERROR)
+        exit(os.EX_SOFTWARE)
 
 
 if __name__ == '__main__':
     main()
-
