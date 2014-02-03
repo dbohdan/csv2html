@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # --dbohdan 2013.03.23
 '''
-This module converts CSV files into HTML tables. It can be used as a standalone
+This module converts CSV files to HTML tables. It can be used as a standalone
 program or imported from your Python code.
 
 For best results install https://pypi.python.org/pypi/html.
@@ -12,6 +12,7 @@ from __future__ import print_function
 import csv
 import argparse
 import os
+import sys
 
 DEFAULT_DELIMITER = ";"
 
@@ -148,6 +149,22 @@ def main():
     It handles command line options and opening files for convert_csv_to_html.
     '''
 
+    # sendmail exit codes are convenient for scripting but they are
+    # not available on Windows, so we compensate for that. The numbers
+    # come from POSIX sysexit.h.
+    exit_codes = {'EX_OK': 0,
+                  'EX_NOINPUT': 66,
+                  'EX_UNAVAILABLE': 69,
+                  'EX_SOFTWARE': 70,
+                  'EX_IOERR': 74}
+
+    # Replace the numerical values of the codes with those from `os` if
+    # available. Unless your system is quite strange they shouldn't actually
+    # differ from the above.
+    for code in exit_codes:
+        if hasattr(os, code):
+            exit_codes[code] = getattr(os, code)
+
     # Configure the command line argument parser.
     parser = argparse.ArgumentParser(description='Converts CSV files into \
 HTML tables')
@@ -183,10 +200,7 @@ HTML tables')
 
     if args.inputfile == '':
         parser.print_help()
-        exit(ex.EX_NOINPUT)
-
-    if args.outputfile == '':
-        args.outputfile = '/dev/stdout'
+        sys.exit(exit_codes['EX_NOINPUT'])
 
     # Import HTML output modules.
     usinghtmlgen = args.forcehtmlgen
@@ -198,7 +212,8 @@ HTML tables')
         except ImportError:
             usinghtmlgen = True
 
-    if usinghtmlgen:  # Careful, do _not_ merge this with the above block.
+    # Careful, do _not_ merge this conditional block with the one above.
+    if usinghtmlgen:
         global HTMLgen
         try:
             import HTMLgen
@@ -209,21 +224,30 @@ Please install HTMLgen.")
             else:
                 print("Couldn't import HTMLgen or html.\n\n\
 Please install either to use csv2html.")
-            exit(os.EX_UNAVAILABLE)
+            sys.exit(exit_codes['EX_UNAVAILABLE'])
 
     try:
         with open(args.inputfile, 'rb') as incsvfile:
-            with open(args.outputfile, 'wb') as outhtmlfile:
-                convert_csv_to_html(incsvfile, outhtmlfile, args.title,
-                                    args.delim, args.nstart, args.skipheader,
-                                    args.renum, args.completedoc,
-                                    usinghtmlgen)
+            # Only write to stdout if output file name is empty. If the output
+            # file can't be written to it is instead handled as an exception.
+            if args.outputfile != '':
+                outhtmlfile = open(args.outputfile, 'wb')
+            else:
+                outhtmlfile = sys.stdout
+
+            convert_csv_to_html(incsvfile, outhtmlfile, args.title,
+                                args.delim, args.nstart, args.skipheader,
+                                args.renum, args.completedoc,
+                                usinghtmlgen)
+
+            outhtmlfile.close()
+        sys.exit(exit_codes['EX_OK'])
     except IOError as e:
         print("I/O error({0}): {1}".format(e.errno, e.strerror))
-        exit(os.EX_IOERR)
+        sys.exit(exit_codes['EX_IOERR'])
     except Exception as e:
         print("Unexpected error:", e)
-        exit(os.EX_SOFTWARE)
+        sys.exit(exit_codes['EX_SOFTWARE'])
 
 
 if __name__ == '__main__':
