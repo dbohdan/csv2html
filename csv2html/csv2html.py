@@ -15,7 +15,7 @@ import argparse
 import os
 import sys
 
-DEFAULT_DELIMITER = ";"
+DEFAULT_DELIMITER = ","
 
 
 # Below are classes for interfacing with different HTML output modules.
