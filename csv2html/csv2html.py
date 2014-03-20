@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-# --dbohdan 2013.03.23
+# csv2html copyright (C) 2013, 2014 Danyil Bohdan.
+# All rights reserved.
 '''
 This module converts CSV files to HTML tables. It can be used as a standalone
 program or imported from your Python code.
 
-For best results install https://pypi.python.org/pypi/html.
+For best results install https://pypi.python.org/pypi/html module.
 See the files README.md and LICENSE for more information.
 '''
 from __future__ import print_function
