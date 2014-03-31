@@ -11,12 +11,13 @@ setup(
     author_email='danyil.bohdan@gmail.com',
     license='BSD',
     packages=find_packages(),
-    data_files=['LICENSE', 'README.md'],
+    data_files=[('', ['LICENSE', 'README.md'])],
     zip_safe=False,
     install_requires=[
-            "html",
+            'argparse',
+            'html',
         ],
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'csv2html = csv2html.csv2html:main',
         ],
