@@ -41,7 +41,7 @@ Command line arguments
       -t TITLE, --title TITLE
                             document & table title
       -d DELIM, --delimiter DELIM
-                            field delimiter for CSV (";" by default)
+                            field delimiter for CSV ("," by default)
       -s N, --start N       skip the first N-1 rows, start with row N
       -r, --renumber        replace the first column with row numbers
       -n, --no-header       do not use the first row of the input as the header
