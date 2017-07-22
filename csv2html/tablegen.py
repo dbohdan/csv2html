@@ -7,19 +7,22 @@ if sys.version_info >= (3, 2):
 else:
     from cgi import escape
 
+
 def start(completedoc=False, title=''):
     s = ''
     if completedoc:
         s += ('<!DOCTYPE html>\n<html>\n<head><title>' + escape(title) +
-                '</title></head>\n<body>')
+              '</title></head>\n<body>')
     s += '<table>\n'
     return s
+
 
 def end(completedoc=False):
     s = '</table>'
     if completedoc:
         s += '</body>\n</html>'
     return s
+
 
 def row(r, headerrow=False):
     if headerrow:

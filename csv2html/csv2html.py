@@ -32,7 +32,7 @@ def convert_csv_to_html(inputstream, outputstream, title='',
     # Read the CSV stream.
     csvreader = csv.reader(inputstream, dialect='excel',
                            delimiter=delim)
-    nrow = 0 # The row number counter.
+    nrow = 0  # The row number counter.
 
     if sys.version_info[0] == 2:
         def next_row():
@@ -51,9 +51,9 @@ def convert_csv_to_html(inputstream, outputstream, title='',
         nrow += 1
     for row in csvreader:
         if renum:
-            # If there is no zeroth header row, add one to the new row number to
-            # correct for the rows being counted from zero. Do the same if
-            # we're started from nstart.
+            # If there is no zeroth header row, add 1 to the new row number
+            # to correct for the rows being counted from zero. Do the same if
+            # we're counting from nstart.
             row[0] = str(nrow - nstart + int(skipheader or nstart > 0))
         outputstream.write(tablegen.row(row))
         nrow += 1
@@ -83,8 +83,8 @@ def main():
             exit_codes[code] = getattr(os, code)
 
     # Configure the command line argument parser.
-    parser = argparse.ArgumentParser(description='Converts CSV files into \
-HTML tables')
+    parser = argparse.ArgumentParser(description='Convert CSV files to \
+                                     HTML tables')
     parser.add_argument('inputfile', help='input file',
                         default='', metavar='input')
     parser.add_argument('-o', '--output', help='output file',
@@ -93,20 +93,21 @@ HTML tables')
     parser.add_argument('-t', '--title', help='document & table title',
                         default='')
     parser.add_argument('-d', '--delimiter', help='field delimiter for CSV \
-("%s" by default)' % DEFAULT_DELIMITER, default=DEFAULT_DELIMITER,
+                        ("%s" by default)' % DEFAULT_DELIMITER,
+                        default=DEFAULT_DELIMITER,
                         dest='delim')
-    parser.add_argument('-s', '--start', metavar='N', help=
-                        'skip the first N-1 rows, start with row N',
+    parser.add_argument('-s', '--start', metavar='N',
+                        help='skip the first N-1 rows, start with row N',
                         type=int, default=0, dest='nstart')
-    parser.add_argument('-r', '--renumber', help=
-                        'replace the first column with row numbers',
+    parser.add_argument('-r', '--renumber',
+                        help='replace the first column with row numbers',
                         action='store_true', default=False, dest='renum')
-    parser.add_argument('-n', '--no-header', help=
-                        'do not use the first row of the input as the header',
+    parser.add_argument('-n', '--no-header', help='do not use the first row of \
+                        the input as the header',
                         action='store_true', default=False, dest='skipheader')
-    parser.add_argument('-c', '--complete-document', help=
-                        'output a complete HTML document instead of only the \
-    table', action='store_true', default=False, dest='completedoc')
+    parser.add_argument('-c', '--complete-document', help='output a complete \
+                        HTML document instead of only a table',
+                        action='store_true', default=False, dest='completedoc')
     parser.add_argument('-v', '--version',
                         action='version', version=__version__)
 
