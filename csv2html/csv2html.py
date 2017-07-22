@@ -90,14 +90,14 @@ def main():
     parser.add_argument('-o', '--output', help='output file',
                         default='', required=False, metavar='output',
                         dest='outputfile')
-    parser.add_argument('-t', '--title', help='document & table title',
+    parser.add_argument('-t', '--title', help='HTML document title',
                         default='')
     parser.add_argument('-d', '--delimiter', help='field delimiter for CSV \
                         ("%s" by default)' % DEFAULT_DELIMITER,
                         default=DEFAULT_DELIMITER,
                         dest='delim')
     parser.add_argument('-s', '--start', metavar='N',
-                        help='skip the first N-1 rows, start with row N',
+                        help='skip the first N-1 rows, start at row N',
                         type=int, default=0, dest='nstart')
     parser.add_argument('-r', '--renumber',
                         help='replace the first column with row numbers',
