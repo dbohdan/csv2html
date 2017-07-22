@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-execfile('csv2html/__init__.py')
+from csv2html import __version__
 
 setup(
     name='csv2html',
@@ -10,13 +10,12 @@ setup(
     author='dbohdan',
     author_email='dbohdan@dbohdan.com',
     license='BSD',
-    packages=find_packages(),
+    packages=['csv2html'],
     data_files=[('', ['LICENSE', 'README.md'])],
     zip_safe=False,
     install_requires=[
-            'argparse',
-            'html',
-        ],
+        'argparse',
+    ],
     entry_points={
         'console_scripts': [
             'csv2html = csv2html.csv2html:main',
