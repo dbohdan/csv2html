@@ -102,6 +102,8 @@ HTML tables')
     parser.add_argument('-c', '--complete-document', help=
                         'output a complete HTML document instead of only the \
     table', action='store_true', default=False, dest='completedoc')
+    parser.add_argument('-v', '--version',
+                        action='version', version=__version__)
 
     # Process command line arguments.
     args = parser.parse_args()
