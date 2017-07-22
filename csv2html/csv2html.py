@@ -32,11 +32,10 @@ def convert_csv_to_html(inputstream, outputstream, title='',
     # Read the CSV stream.
     csvreader = csv.reader(inputstream, dialect='excel',
                            delimiter=delim)
-    nrow = 0  # row number counter
-    headerrow = not skipheader
+    nrow = 0 # The row number counter.
 
     outputstream.write(tablegen.start(completedoc, title))
-    if headerrow:
+    if not skipheader:
         row = csvreader.next()
         outputstream.write(tablegen.row(row, True))
     while nrow < nstart:
@@ -44,12 +43,10 @@ def convert_csv_to_html(inputstream, outputstream, title='',
         nrow += 1
     for row in csvreader:
         if renum:
-            row[0] = str(nrow - nstart +
-                         int(skipheader or nstart > 0))
-                         # Adds 1 if true to correct for
-                         # numbering rows from zero with no
-                         # zeroth header row or subtracting
-                         # nstart.
+            # If there is no zeroth header row, add one to the new row number to
+            # correct for the rows being counted from zero. Do the same if
+            # we're started from nstart.
+            row[0] = str(nrow - nstart + int(skipheader or nstart > 0))
         outputstream.write(tablegen.row(row))
         nrow += 1
     outputstream.write(tablegen.end(completedoc))
@@ -61,18 +58,18 @@ def main():
     It handles command line options and opening files for convert_csv_to_html.
     '''
 
-    # sendmail exit codes are convenient for scripting but they are
-    # not available on Windows, so we compensate for that. The numbers
-    # come from POSIX sysexit.h.
+    # The sendmail exit codes are convenient for scripting, but they are
+    # unavailable on Windows. We hard code them here as a backup for that case.
+    # The numbers come from the POSIX sysexit.h.
     exit_codes = {'EX_OK': 0,
                   'EX_NOINPUT': 66,
                   'EX_UNAVAILABLE': 69,
                   'EX_SOFTWARE': 70,
                   'EX_IOERR': 74}
 
-    # Replace the numerical values of the codes with those from `os` if
-    # available. Unless your system is quite strange they shouldn't actually
-    # differ from the above.
+    # Replace the hard coded numerical values of the exit codes with those from
+    # the module `os` if it has them. Unless your system is quite strange they
+    # shouldn't actually differ from the above.
     for code in exit_codes:
         if hasattr(os, code):
             exit_codes[code] = getattr(os, code)
@@ -105,7 +102,7 @@ HTML tables')
     parser.add_argument('-v', '--version',
                         action='version', version=__version__)
 
-    # Process command line arguments.
+    # Process the command line arguments.
     args = parser.parse_args()
 
     if args.inputfile == '':
@@ -114,8 +111,9 @@ HTML tables')
 
     try:
         with open(args.inputfile, 'rb') as incsvfile:
-            # Only write to stdout if output file name is empty. If the output
-            # file can't be written to it is instead handled as an exception.
+            # Only write to stdout if the output file name is empty. If the
+            # output file can't be written to, it is instead handled as an
+            # exception.
             if args.outputfile != '':
                 outhtmlfile = open(args.outputfile, 'wb')
             else:
