@@ -13,6 +13,7 @@ setup(
     packages=['csv2html'],
     data_files=[('', ['LICENSE', 'README.md'])],
     zip_safe=False,
+    test_suite='test',
     install_requires=[
         'argparse',
     ],
