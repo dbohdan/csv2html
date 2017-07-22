@@ -6,8 +6,8 @@ import cgi
 def start(completedoc=False, title=""):
     s = ""
     if completedoc:
-        s += ("<!DOCTYPE html>\n<html>\n<head><title>" + title +
-                "</title><html><body>")
+        s += ("<!DOCTYPE html>\n<html>\n<head><title>" + cgi.escape(title) +
+                "</title></head>\n<body>")
     s += '<table border="1">\n'
     return s
 
