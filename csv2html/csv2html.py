@@ -38,6 +38,7 @@ def convert_csv_to_html(inputstream, outputstream, title='',
     if not skipheader:
         row = csvreader.next()
         outputstream.write(tablegen.row(row, True))
+        nrow += 1
     while nrow < nstart:
         csvreader.next()
         nrow += 1
