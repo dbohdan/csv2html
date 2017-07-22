@@ -12,7 +12,7 @@ def start(completedoc=False, title=""):
     if completedoc:
         s += ("<!DOCTYPE html>\n<html>\n<head><title>" + escape(title) +
                 "</title></head>\n<body>")
-    s += '<table border="1">\n'
+    s += '<table>\n'
     return s
 
 def end(completedoc=False):
