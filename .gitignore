@@ -1,1 +1,4 @@
-csv2html.pyc
+/build/
+/dist/
+*.egg-info
+*.pyc
