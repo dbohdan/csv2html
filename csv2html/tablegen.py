@@ -7,29 +7,29 @@ if sys.version_info >= (3, 2):
 else:
     from cgi import escape
 
-def start(completedoc=False, title=""):
-    s = ""
+def start(completedoc=False, title=''):
+    s = ''
     if completedoc:
-        s += ("<!DOCTYPE html>\n<html>\n<head><title>" + escape(title) +
-                "</title></head>\n<body>")
+        s += ('<!DOCTYPE html>\n<html>\n<head><title>' + escape(title) +
+                '</title></head>\n<body>')
     s += '<table>\n'
     return s
 
 def end(completedoc=False):
-    s = "</table>"
+    s = '</table>'
     if completedoc:
-        s += "</body>\n</html>"
+        s += '</body>\n</html>'
     return s
 
 def row(r, headerrow=False):
     if headerrow:
-        tag = "th"
+        tag = 'th'
     else:
-        tag = "td"
+        tag = 'td'
 
-    res = ["<tr>"]
+    res = ['<tr>']
     for cell in r:
-        res.append("<" + tag + ">" + escape(cell) + "</" + tag + ">")
-    res.append("</tr>\n")
+        res.append('<' + tag + '>' + escape(cell) + '</' + tag + '>')
+    res.append('</tr>\n')
 
-    return "".join(res)
+    return ''.join(res)
