@@ -5,7 +5,7 @@ from csv2html import __version__
 setup(
     name='csv2html',
     version=__version__,
-    description='A flexible utility to convert CSV files into HTML tables.',
+    description='Convert CSV files to HTML tables.',
     url='http://github.com/dbohdan/csv2html',
     author='dbohdan',
     author_email='dbohdan@dbohdan.com',

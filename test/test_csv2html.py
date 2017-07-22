@@ -3,10 +3,16 @@
 # Copyright (c) 2013, 2014, 2017 dbohdan. All rights reserved.
 # License: BSD-3. See the file LICENSE.
 
-from csv2html import csv2html
+from .context import csv2html
 import os.path
+import sys
 import unittest
-import StringIO
+
+
+if csv2html.PYTHON2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 TEST_PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -18,10 +24,14 @@ def read_file(filename):
 
 
 def convert_test_data(filename="test.csv", **kwargs):
-    output = StringIO.StringIO()
-    with open(os.path.join(TEST_PATH, "test.csv"), "rb") as input:
+    output = StringIO()
+    mode = "rb" if csv2html.PYTHON2 else "r"
+    with open(os.path.join(TEST_PATH, "test.csv"), mode) as input:
         csv2html.convert_csv_to_html(input, output, **kwargs)
-    return output.getvalue().decode("utf-8")
+    s = output.getvalue()
+    if csv2html.PYTHON2:
+        s = s.decode("utf-8")
+    return s
 
 
 class TestCsv2html(unittest.TestCase):

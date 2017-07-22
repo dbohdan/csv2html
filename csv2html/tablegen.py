@@ -1,12 +1,16 @@
 # csv2html
 # Copyright (c) 2013, 2014, 2017 dbohdan. All rights reserved.
 # License: BSD-3. See the file LICENSE.
-import cgi
+import sys
+if sys.version_info >= (3, 2):
+    from html import escape
+else:
+    from cgi import escape
 
 def start(completedoc=False, title=""):
     s = ""
     if completedoc:
-        s += ("<!DOCTYPE html>\n<html>\n<head><title>" + cgi.escape(title) +
+        s += ("<!DOCTYPE html>\n<html>\n<head><title>" + escape(title) +
                 "</title></head>\n<body>")
     s += '<table border="1">\n'
     return s
@@ -25,7 +29,7 @@ def row(r, headerrow=False):
 
     res = ["<tr>"]
     for cell in r:
-        res.append("<" + tag + ">" + cgi.escape(cell) + "</" + tag + ">")
+        res.append("<" + tag + ">" + escape(cell) + "</" + tag + ">")
     res.append("</tr>\n")
 
     return "".join(res)

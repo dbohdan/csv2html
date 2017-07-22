@@ -10,15 +10,15 @@ program.
 from __future__ import print_function
 
 from . import __version__
+from . import tablegen
 
 import argparse
 import csv
 import os
 import sys
-import tablegen
-
 
 DEFAULT_DELIMITER = ","
+PYTHON2 = sys.version_info[0] == 2
 
 
 def convert_csv_to_html(inputstream, outputstream, title='',
@@ -34,13 +34,20 @@ def convert_csv_to_html(inputstream, outputstream, title='',
                            delimiter=delim)
     nrow = 0 # The row number counter.
 
+    if sys.version_info[0] == 2:
+        def next_row():
+            return csvreader.next()
+    else:
+        def next_row():
+            return csvreader.__next__()
+
     outputstream.write(tablegen.start(completedoc, title))
     if not skipheader:
-        row = csvreader.next()
+        row = next_row()
         outputstream.write(tablegen.row(row, True))
         nrow += 1
     while nrow < nstart:
-        csvreader.next()
+        next_row()
         nrow += 1
     for row in csvreader:
         if renum:
@@ -111,12 +118,12 @@ HTML tables')
         sys.exit(exit_codes['EX_NOINPUT'])
 
     try:
-        with open(args.inputfile, 'rb') as incsvfile:
+        with open(args.inputfile, 'rb' if PYTHON2 else 'r') as incsvfile:
             # Only write to stdout if the output file name is empty. If the
             # output file can't be written to, it is instead handled as an
             # exception.
             if args.outputfile != '':
-                outhtmlfile = open(args.outputfile, 'wb')
+                outhtmlfile = open(args.outputfile, 'wb' if PYTHON2 else 'w')
             else:
                 outhtmlfile = sys.stdout
 
