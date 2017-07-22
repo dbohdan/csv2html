@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# csv2html copyright (C) 2013, 2014 Danyil Bohdan.
+# csv2html copyright (c) 2013, 2014, 2017 dbohdan.
 # All rights reserved.
 '''
 This module converts CSV files to HTML tables. It can be used as a standalone
