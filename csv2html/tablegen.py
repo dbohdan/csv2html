@@ -1,6 +1,6 @@
 # csv2html
 # Copyright (c) 2013, 2014, 2017 dbohdan. All rights reserved.
-# License: BSD-3. See the file LICENSE.
+# License: BSD (3-clause). See the file LICENSE.
 import sys
 if sys.version_info >= (3, 2):
     from html import escape
