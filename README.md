@@ -1,6 +1,9 @@
 csv2html
 ========
 
+[![Travis CI Build Status](https://travis-ci.org/dbohdan/csv2html.svg?branch=master)](https://travis-ci.org/dbohdan/csv2html)
+[![AppVeyor CI Build Status](https://ci.appveyor.com/api/projects/status/github/dbohdan/csv2html?branch=master&svg=true)](https://ci.appveyor.com/project/dbohdan/csv2html)
+
 This command line utility and reusable Python package converts [CSV files](http://en.wikipedia.org/wiki/Comma-separated_values) to HTML tables or complete HTML documents. It requires Python 2.7 or Python 3.2 or later. By default it uses the first row of the CSV file as the [header](https://developer.mozilla.org/en/docs/Web/HTML/Element/th) of the HTML table.
 
 
