@@ -23,7 +23,7 @@ PYTHON2 = sys.version_info[0] == 2
 
 def convert_csv_to_html(inputstream, outputstream, title='',
                         delim=DEFAULT_DELIMITER, nstart=0, skipheader=False,
-                        renum=False, completedoc=False):
+                        renum=False, completedoc=False, attrs={}):
     '''
     Takes CSV data from inputstream (an iterable) and outputs an HTML table to
     outputstream (anything with a write method that takes a string).
@@ -41,10 +41,10 @@ def convert_csv_to_html(inputstream, outputstream, title='',
         def next_row():
             return csvreader.__next__()
 
-    outputstream.write(tablegen.start(completedoc, title))
+    outputstream.write(tablegen.start(completedoc, title, attrs))
     if not skipheader:
         row = next_row()
-        outputstream.write(tablegen.row(row, True))
+        outputstream.write(tablegen.row(row, True, attrs))
         nrow += 1
     while nrow < nstart:
         next_row()
@@ -55,7 +55,7 @@ def convert_csv_to_html(inputstream, outputstream, title='',
             # to correct for the rows being counted from zero. Do the same if
             # we're counting from nstart.
             row[0] = str(nrow - nstart + int(skipheader or nstart > 0))
-        outputstream.write(tablegen.row(row))
+        outputstream.write(tablegen.row(row, False, attrs))
         nrow += 1
     outputstream.write(tablegen.end(completedoc))
 
@@ -70,6 +70,7 @@ def main():
     # unavailable on Windows. We hard code them here as a backup for that case.
     # The numbers come from the POSIX sysexit.h.
     exit_codes = {'EX_OK': 0,
+                  'EX_DATAERR': 65,
                   'EX_NOINPUT': 66,
                   'EX_UNAVAILABLE': 69,
                   'EX_SOFTWARE': 70,
@@ -110,6 +111,22 @@ def main():
                         action='store_true', default=False, dest='completedoc')
     parser.add_argument('-v', '--version',
                         action='version', version=__version__)
+    attrs_group = parser.add_argument_group('HTML tag attributes')
+    attrs_group.add_argument('--table', metavar='ATTRS',
+                             help='Attributes for the tag <table> (e.g., \
+                             --table \'foo="bar" baz\' results in the output \
+                             <table foo="bar" baz>...</table>); it is up to \
+                             the user to ensure the result is valid HTML',
+                             default='')
+    attrs_group.add_argument('--tr', metavar='ATTRS',
+                             help='Attributes for <tr>',
+                             default='')
+    attrs_group.add_argument('--th', metavar='ATTRS',
+                             help='Attributes for <th>',
+                             default='')
+    attrs_group.add_argument('--td', metavar='ATTRS',
+                             help='Attributes for <td>',
+                             default='')
 
     # Process the command line arguments.
     args = parser.parse_args()
@@ -128,9 +145,15 @@ def main():
             else:
                 outhtmlfile = sys.stdout
 
+            attrs = {
+                'table': args.table,
+                'tr': args.tr,
+                'th': args.th,
+                'td': args.td,
+            }
             convert_csv_to_html(incsvfile, outhtmlfile, args.title,
                                 args.delim, args.nstart, args.skipheader,
-                                args.renum, args.completedoc)
+                                args.renum, args.completedoc, attrs)
 
             outhtmlfile.close()
         sys.exit(exit_codes['EX_OK'])

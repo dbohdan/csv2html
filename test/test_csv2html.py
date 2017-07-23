@@ -71,5 +71,16 @@ class TestCsv2html(unittest.TestCase):
             convert_test_data(nstart=5, skipheader=True)
         )
 
+    def test_attrs(self):
+        self.assertEqual(
+            read_file('test-attrs.html'),
+            convert_test_data(attrs={
+                'table': 'class="foo" id="bar"',
+                'tr': 'class="row"',
+                'th': 'class="hcell"',
+                'td': 'class="cell"',
+            })
+        )
+
 if __name__ == '__main__':
     unittest.main()

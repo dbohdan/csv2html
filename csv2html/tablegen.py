@@ -8,12 +8,17 @@ else:
     from cgi import escape
 
 
-def start(completedoc=False, title=''):
+def _tag_with_attrs(tag, attrs):
+    tag_attrs = attrs.get(tag, '')
+    return '<' + tag + ('' if tag_attrs == '' else ' ' + tag_attrs) + '>'
+
+
+def start(completedoc=False, title='', attrs={}):
     s = ''
     if completedoc:
         s += ('<!DOCTYPE html>\n<html>\n<head><title>' + escape(title) +
               '</title></head>\n<body>')
-    s += '<table>\n'
+    s += _tag_with_attrs('table', attrs) + '\n'
     return s
 
 
@@ -24,15 +29,16 @@ def end(completedoc=False):
     return s
 
 
-def row(r, headerrow=False):
+def row(r, headerrow=False, attrs={}):
     if headerrow:
         tag = 'th'
     else:
         tag = 'td'
 
-    res = ['<tr>']
+    res = [_tag_with_attrs('tr', attrs)]
     for cell in r:
-        res.append('<' + tag + '>' + escape(cell) + '</' + tag + '>')
+        res.append(_tag_with_attrs(tag, attrs) + escape(cell) +
+                   '</' + tag + '>')
     res.append('</tr>\n')
 
     return ''.join(res)

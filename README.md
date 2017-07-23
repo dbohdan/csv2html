@@ -25,7 +25,7 @@ Command line arguments
 ----------------------
 
     usage: csv2html [-h] [-o output] [-t TITLE] [-d DELIM] [-s N] [-r] [-n] [-c]
-                    [-v]
+                    [-v] [--table ATTRS] [--tr ATTRS] [--th ATTRS] [--td ATTRS]
                     input
 
     Convert CSV files to HTML tables
@@ -49,11 +49,20 @@ Command line arguments
                             table
       -v, --version         show program's version number and exit
 
+    HTML tag attributes:
+      --table ATTRS         Attributes for the tag <table> (e.g., --table
+                            'foo="bar" baz' results in the output <table foo="bar"
+                            baz>...</table>); it is up to the user to ensure the
+                            result is valid HTML
+      --tr ATTRS            Attributes for <tr>
+      --th ATTRS            Attributes for <th>
+      --td ATTRS            Attributes for <td>
+
 
 Use examples
 ------------
 
-The following command takes data from `test/test.csv` and outputs the corresponding HTML table to `test.html`:
+The following command reads the data from `test/test.csv` and writes the corresponding HTML table to `test.html`:
 
     csv2html -o test.html test/test.csv
 
