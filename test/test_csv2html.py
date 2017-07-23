@@ -8,11 +8,11 @@ import os.path
 import sys
 import unittest
 
-
 if csv2html.PYTHON2:
     from StringIO import StringIO
 else:
     from io import StringIO
+
 
 TEST_PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -25,9 +25,14 @@ def read_file(filename):
 
 def convert_test_data(filename='test.csv', **kwargs):
     output = StringIO()
-    mode = 'rb' if csv2html.PYTHON2 else 'r'
-    with open(os.path.join(TEST_PATH, 'test.csv'), mode) as input:
+
+    if csv2html.PYTHON2:
+        ctx = open(os.path.join(TEST_PATH, filename), 'rb')
+    else:
+        ctx = open(os.path.join(TEST_PATH, filename), 'r', encoding='utf-8')
+    with ctx as input:
         csv2html.convert_csv_to_html(input, output, **kwargs)
+
     s = output.getvalue()
     if csv2html.PYTHON2:
         s = s.decode('utf-8')
