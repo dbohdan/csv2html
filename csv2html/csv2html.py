@@ -135,35 +135,42 @@ def main():
         parser.print_help()
         sys.exit(exit_codes['EX_NOINPUT'])
 
+    exit_code = exit_codes['EX_OK']
+
     try:
-        with open(args.inputfile, 'rb' if PYTHON2 else 'r') as incsvfile:
-            # Only write to stdout if the output file name is empty. If the
-            # output file can't be written to, it is instead handled as an
-            # exception.
-            if args.outputfile != '':
-                outhtmlfile = open(args.outputfile, 'wb' if PYTHON2 else 'w')
-            else:
-                outhtmlfile = sys.stdout
+        if args.inputfile == '-':
+            incsvfile = sys.stdin
+        else:
+            incsvfile = open(args.inputfile, 'rb' if PYTHON2 else 'r')
 
-            attrs = {
-                'table': args.table,
-                'tr': args.tr,
-                'th': args.th,
-                'td': args.td,
-            }
-            convert_csv_to_html(incsvfile, outhtmlfile, args.title,
-                                args.delim, args.nstart, args.skipheader,
-                                args.renum, args.completedoc, attrs)
+        # Only write to stdout if the output file name is empty. If the
+        # output file can't be written to, that is instead handled as an
+        # exception.
+        if args.outputfile == '':
+            outhtmlfile = sys.stdout
+        else:
+            outhtmlfile = open(args.outputfile, 'wb' if PYTHON2 else 'w')
 
-            outhtmlfile.close()
-        sys.exit(exit_codes['EX_OK'])
+        attrs = {
+            'table': args.table,
+            'tr': args.tr,
+            'th': args.th,
+            'td': args.td,
+        }
+        convert_csv_to_html(incsvfile, outhtmlfile, args.title,
+                            args.delim, args.nstart, args.skipheader,
+                            args.renum, args.completedoc, attrs)
+
+        exit_code = exit_codes['EX_OK']
     except IOError as e:
         print('I/O error({0}): {1}'.format(e.errno, e.strerror),
               file=sys.stderr)
-        sys.exit(exit_codes['EX_IOERR'])
+        exit_code = exit_codes['EX_IOERR']
     except Exception as e:
         print('Unexpected error:', e, file=sys.stderr)
-        sys.exit(exit_codes['EX_SOFTWARE'])
+        exit_code = exit_codes['EX_SOFTWARE']
+
+    sys.exit(exit_code)
 
 
 if __name__ == '__main__':
