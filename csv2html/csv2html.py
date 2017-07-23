@@ -30,16 +30,15 @@ def convert_csv_to_html(inputstream, outputstream, title='',
     '''
 
     # Read the CSV stream.
-    csvreader = csv.reader(inputstream, dialect='excel',
-                           delimiter=delim)
+    csv_reader = csv.reader(inputstream, dialect='excel', delimiter=delim)
     nrow = 0  # The row number counter.
 
     if sys.version_info[0] == 2:
         def next_row():
-            return csvreader.next()
+            return csv_reader.next()
     else:
         def next_row():
-            return csvreader.__next__()
+            return csv_reader.__next__()
 
     outputstream.write(tablegen.start(completedoc, title, attrs))
     if not skipheader:
@@ -49,7 +48,7 @@ def convert_csv_to_html(inputstream, outputstream, title='',
     while nrow < nstart:
         next_row()
         nrow += 1
-    for row in csvreader:
+    for row in csv_reader:
         if renum:
             # If there is no zeroth header row, add 1 to the new row number
             # to correct for the rows being counted from zero. Do the same if
@@ -82,6 +81,7 @@ def main():
     for code in exit_codes:
         if hasattr(os, code):
             exit_codes[code] = getattr(os, code)
+
 
     # Configure the command line argument parser.
     parser = argparse.ArgumentParser(description='Convert CSV files to \
@@ -135,21 +135,22 @@ def main():
         parser.print_help()
         sys.exit(exit_codes['EX_NOINPUT'])
 
+
     exit_code = exit_codes['EX_OK']
 
     try:
         if args.inputfile == '-':
-            incsvfile = sys.stdin
+            in_csv_file = sys.stdin
         else:
-            incsvfile = open(args.inputfile, 'rb' if PYTHON2 else 'r')
+            in_csv_file = open(args.inputfile, 'rb' if PYTHON2 else 'r')
 
         # Only write to stdout if the output file name is empty. If the
         # output file can't be written to, that is instead handled as an
         # exception.
         if args.outputfile == '':
-            outhtmlfile = sys.stdout
+            out_html_file = sys.stdout
         else:
-            outhtmlfile = open(args.outputfile, 'wb' if PYTHON2 else 'w')
+            out_html_file = open(args.outputfile, 'wb' if PYTHON2 else 'w')
 
         attrs = {
             'table': args.table,
@@ -157,7 +158,7 @@ def main():
             'th': args.th,
             'td': args.td,
         }
-        convert_csv_to_html(incsvfile, outhtmlfile, args.title,
+        convert_csv_to_html(in_csv_file, out_html_file, args.title,
                             args.delim, args.nstart, args.skipheader,
                             args.renum, args.completedoc, attrs)
 
