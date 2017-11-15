@@ -33,7 +33,7 @@ def convert_csv_to_html(inputstream, outputstream, title='',
     csv_reader = csv.reader(inputstream, dialect='excel', delimiter=delim)
     nrow = 0  # The row number counter.
 
-    if sys.version_info[0] == 2:
+    if PYTHON2:
         def next_row():
             return csv_reader.next()
     else:
