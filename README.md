@@ -12,16 +12,16 @@ Installation
 
 First, make sure Setuptools are installed with
 
-    sudo apt-get install python-setuptools  # Debian/Ubuntu
+    sudo apt install python3-setuptools  # Debian/Ubuntu
 
 or
 
     su -
-    dnf install python-setuptools  # Fedora/CentOS
+    dnf install python3-setuptools  # Fedora/CentOS
 
 Clone the repository and run
 
-    sudo python setup.py install
+    python3 setup.py install --user
 
 
 Command line arguments
