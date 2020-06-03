@@ -35,7 +35,7 @@ struct Opts {
 
 fn cli() -> errors::Result<Opts> {
     let matches = App::new("csv2html")
-        .version("3.0.0")
+        .version("3.0.1")
         .about("Convert CSV files to HTML tables")
         .arg(Arg::with_name("input").help("Input file").index(1))
         .arg(

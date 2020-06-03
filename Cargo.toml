@@ -1,6 +1,6 @@
 [package]
 name = "csv2html"
-version = "3.0.0"
+version = "3.0.1"
 authors = ["D. Bohdan"]
 edition = "2018"
 
