@@ -7,10 +7,11 @@ import os.path
 import sys
 import unittest
 
-from io import StringIO
+from os import environ
 from subprocess import run
 
 
+COMMAND = environ.get('CSV2HTML_COMMAND', 'csv2html')
 TEST_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -24,19 +25,18 @@ def read_file(filename):
     return content
 
 
-def convert_test_data(
+def run_csv2html(
     *args,
-    command='csv2html',
     filename='test.csv',
     stdin=None
 ):
     path = filename if filename == '-' else data_file(filename)
 
     return run(
-        [command, path, *args],
+        [COMMAND, path, *args],
         capture_output=True,
         stdin=stdin
-    ).stdout
+    )
 
 
 class TestCsv2html(unittest.TestCase):
@@ -44,53 +44,77 @@ class TestCsv2html(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
 
+        # The sendmail exit codes are convenient for scripting, but they are
+        # unavailable in Python on Windows.  We hard code them here instead.
+        # The numbers come from POSIX sysexit.h.
+        self.exitCodes = {
+            'EX_OK': 0,
+            'EX_DATAERR': 65,
+            'EX_NOINPUT': 66,
+            'EX_UNAVAILABLE': 69,
+            'EX_SOFTWARE': 70,
+            'EX_IOERR': 74
+        }
+
     def test_default(self):
         self.assertEqual(
+            run_csv2html().stdout,
             read_file('test-default.html'),
-            convert_test_data()
         )
 
     def test_stdin(self):
         with open(data_file('test.csv')) as f:
             self.assertEqual(
+                run_csv2html(filename='-', stdin=f).stdout,
                 read_file('test-default.html'),
-                convert_test_data(filename='-', stdin=f)
             )
 
     def test_completedoc_and_title(self):
         self.assertEqual(
+            run_csv2html(
+                '--title', 'Foo & Bar',
+                '--complete-document'
+            ).stdout,
             read_file('test-c-t.html'),
-            convert_test_data('--title', 'Foo & Bar', '--complete-document')
         )
 
     def test_renum(self):
         self.assertEqual(
+            run_csv2html('--renumber').stdout,
             read_file('test-r.html'),
-            convert_test_data('--renumber')
         )
 
     def test_nstart(self):
         self.assertEqual(
+            run_csv2html('--start', '5').stdout,
             read_file('test-s5.html'),
-            convert_test_data('--start', '5')
         )
 
     def test_nstart_and_skipheader(self):
         self.assertEqual(
+            run_csv2html('--start', '5', '--no-header').stdout,
             read_file('test-s5-n.html'),
-            convert_test_data('--start', '5', '--no-header')
         )
 
     def test_attrs(self):
         self.assertEqual(
-            read_file('test-attrs.html'),
-            convert_test_data(
+            run_csv2html(
                 '--table', 'class="foo" id="bar"',
                 '--tr', 'class="row"',
                 '--th', 'class="hcell"',
                 '--td', 'class="cell"',
-            )
+            ).stdout,
+            read_file('test-attrs.html'),
         )
+
+    def test_no_file(self):
+        completed = run_csv2html(filename='does-not-exist.csv')
+
+        self.assertRegex(
+            completed.stderr.decode('utf-8'),
+            r'.*No such file or directory.*',
+        )
+        self.assertEqual(completed.returncode, self.exitCodes['EX_IOERR'])
 
 
 if __name__ == '__main__':

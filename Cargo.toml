@@ -1,0 +1,11 @@
+[package]
+name = "csv2html"
+version = "3.0.0"
+authors = ["D. Bohdan"]
+edition = "2018"
+
+[dependencies]
+clap = "2.33"
+csv = "1.1"
+exitcode = "1.1.2"
+snafu = "0.6.8"
