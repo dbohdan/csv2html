@@ -37,13 +37,13 @@ fn cli() -> errors::Result<Opts> {
     let matches = App::new("csv2html")
         .version("3.0.0")
         .about("Convert CSV files to HTML tables")
-        .arg(Arg::with_name("input").help("input file").index(1))
+        .arg(Arg::with_name("input").help("Input file").index(1))
         .arg(
             Arg::with_name("output")
                 .short("o")
                 .long("output")
                 .value_name("OUTPUT")
-                .help("output file"),
+                .help("Output file"),
         )
         .arg(
             Arg::with_name("title")
@@ -57,33 +57,33 @@ fn cli() -> errors::Result<Opts> {
                 .short("d")
                 .long("delimiter")
                 .value_name("DELIM")
-                .help("field delimiter character for CSV (',' by default)"),
+                .help("Field delimiter character for CSV (',' by default)"),
         )
         .arg(
             Arg::with_name("start")
                 .short("s")
                 .long("start")
                 .value_name("N")
-                .help("skip the first N-1 rows, start at row N"),
+                .help("Skip the first N-1 rows; start at row N"),
         )
         .arg(
             Arg::with_name("renumber")
                 .short("r")
                 .long("renumber")
-                .help("replace the first column with row numbers"),
+                .help("Replace the first column with row numbers"),
         )
         .arg(
             Arg::with_name("no-header")
                 .short("n")
                 .long("no-header")
-                .help("do not use the first row of the input as the header"),
+                .help("Do not use the first row of the input as the header"),
         )
         .arg(
             Arg::with_name("complete-document")
                 .short("c")
                 .long("complete-document")
                 .help(
-                    "output a complete HTML document instead of only a table",
+                    "Output a complete HTML document instead of only a table",
                 ),
         )
         .arg(
@@ -91,10 +91,10 @@ fn cli() -> errors::Result<Opts> {
                 .long("table")
                 .value_name("ATTRS")
                 .help(
-                    "Attributes for the tag <table> (e.g., --table \
-                      'foo=\"bar\" baz' results in the output <table \
-                      foo=\"bar\" baz>...</table>); it is up to the \
-                      user to ensure the result is valid HTML",
+                    "HTML attributes for the tag <table> (e.g., --table \
+'foo=\"bar\" baz' results in the output <table \
+foo=\"bar\" baz>...</table>); it is up to the \
+user to ensure the result is valid HTML",
                 ),
         )
         .arg(
@@ -240,17 +240,23 @@ fn main() {
     match app() {
         Ok(_) => exit(exitcode::OK),
         Err(ref err) => match err {
-            errors::Error::OpenInput { filename: _, source: _ }
-            | errors::Error::OpenOutput { filename: _, source: _ }
+            errors::Error::OpenInput {
+                filename: _,
+                source: _,
+            }
+            | errors::Error::OpenOutput {
+                filename: _,
+                source: _,
+            }
             | errors::Error::WriteOutput { source: _ } => {
                 eprintln!("{}", err);
                 exit(exitcode::IOERR);
-            },
+            }
             errors::Error::ParseHeader { source: _ }
             | errors::Error::ParseRow { source: _ } => {
                 eprintln!("{}", err);
                 exit(exitcode::DATAERR);
-            },
+            }
             _ => {
                 eprintln!("{}", err);
                 exit(exitcode::SOFTWARE);
