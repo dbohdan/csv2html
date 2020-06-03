@@ -204,11 +204,10 @@ fn app() -> errors::Result<()> {
     }
 
     let mut i: u64 = 1;
-    let skip = if opts.start <= 1 {
-        0
-    } else {
-        opts.start - if opts.header { 1 } else { 0 }
-    };
+    let mut skip = opts.start;
+    if skip > 0 && opts.header {
+        skip -= 1;
+    }
 
     for result in csv_reader.records().skip(skip) {
         let record = result.context(errors::ParseRow {})?;

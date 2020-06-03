@@ -97,10 +97,16 @@ class TestCsv2html(unittest.TestCase):
             read_file('test-s5.html'),
         )
 
+    def test_start_0_and_no_header(self):
+        self.assertEqual(
+            run_csv2html('--start', '0', '--no-header').stdout,
+            read_file('test-s0-n.html'),
+        )
+
     def test_start_1_and_no_header(self):
         self.assertEqual(
             run_csv2html('--start', '1', '--no-header').stdout,
-            read_file('test-n.html'),
+            read_file('test-s1-n.html'),
         )
 
     def test_start_2_and_no_header(self):
