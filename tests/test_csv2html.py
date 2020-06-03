@@ -113,7 +113,7 @@ class TestCsv2html(unittest.TestCase):
 
         self.assertRegex(
             completed.stderr.decode('utf-8'),
-            r'.*No such file or directory.*',
+            r'.*Can not open the input file.*',
         )
         self.assertEqual(completed.returncode, self.exitCodes['EX_IOERR'])
 
