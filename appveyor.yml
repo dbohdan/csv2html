@@ -1,11 +1,15 @@
 environment:
   CSV2HTML_COMMAND: target\debug\csv2html.exe
   RUST_VERSION: 1.43.0
+  CARGO_PATH: c:\users\appveyor\.cargo
+
+cache:
+  - '$(CARGO_PATH) -> appveyor.yml, Cargo.lock, Cargo.toml'
 
 install:
   - cmd: appveyor-retry appveyor DownloadFile https://win.rustup.rs -FileName rustup-init.exe
   - cmd: rustup-init.exe --default-toolchain %RUST_VERSION% -y
-  - cmd: set PATH=c:\users\appveyor\.cargo\bin;%PATH%
+  - cmd: set PATH=%CARGO_PATH%\bin;%PATH%
 
 build_script:
   - cmd: cargo build
