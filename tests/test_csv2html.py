@@ -8,7 +8,7 @@ import sys
 import unittest
 
 from os import environ
-from subprocess import run
+from subprocess import run, PIPE
 
 
 COMMAND = environ.get('CSV2HTML_COMMAND', 'csv2html')
@@ -34,8 +34,9 @@ def run_csv2html(
 
     return run(
         [COMMAND, path, *args],
-        capture_output=True,
-        stdin=stdin
+        stdin=stdin,
+        stderr=PIPE,
+        stdout=PIPE,
     )
 
 
