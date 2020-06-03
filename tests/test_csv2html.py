@@ -14,16 +14,28 @@ from subprocess import run
 TEST_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
+def data_file(filename):
+    return os.path.join(TEST_PATH, filename)
+
+
 def read_file(filename):
-    with open(os.path.join(TEST_PATH, filename), 'rb') as f:
+    with open(data_file(filename), 'rb') as f:
         content = f.read()
     return content
 
 
-def convert_test_data(*args, command='csv2html', filename='test.csv'):
+def convert_test_data(
+    *args,
+    command='csv2html',
+    filename='test.csv',
+    stdin=None
+):
+    path = filename if filename == '-' else data_file(filename)
+
     return run(
-        [command, os.path.join(TEST_PATH, filename), *args],
-        capture_output=True
+        [command, path, *args],
+        capture_output=True,
+        stdin=stdin
     ).stdout
 
 
@@ -37,6 +49,13 @@ class TestCsv2html(unittest.TestCase):
             read_file('test-default.html'),
             convert_test_data()
         )
+
+    def test_stdin(self):
+        with open(data_file('test.csv')) as f:
+            self.assertEqual(
+                read_file('test-default.html'),
+                convert_test_data(filename='-', stdin=f)
+            )
 
     def test_completedoc_and_title(self):
         self.assertEqual(
