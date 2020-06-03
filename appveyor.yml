@@ -18,5 +18,8 @@ test_script:
   - cmd: cargo test
   - cmd: c:\python35\python.exe tests/test_csv2html.py
 
+after_test:
+  - cmd: copy %CSV2HTML_COMMAND% csv2html.exe
+
 artifacts:
-  - path: '$(CSV2HTML_COMMAND)'
+  - path: csv2html.exe
