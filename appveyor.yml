@@ -1,64 +1,18 @@
 environment:
-  matrix:
-    - PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7.x"
-      PYTHON_ARCH: "32"
+  CSV2HTML_COMMAND: target\debug\csv2html.exe
+  RUST_VERSION: 1.43.0
 
-    - PYTHON: "C:\\Python27-x64"
-      PYTHON_VERSION: "2.7.x"
-      PYTHON_ARCH: "64"
+install:
+  - cmd: appveyor-retry appveyor DownloadFile https://win.rustup.rs -FileName rustup-init.exe
+  - cmd: rustup-init.exe --default-toolchain %RUST_VERSION% -y
+  - cmd: set PATH=c:\users\appveyor\.cargo\bin;%PATH%
 
-    - PYTHON: "C:\\Python32"
-      PYTHON_VERSION: "3.2.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python32-x64"
-      PYTHON_VERSION: "3.2.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python33"
-      PYTHON_VERSION: "3.3.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python33-x64"
-      PYTHON_VERSION: "3.3.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python34-x64"
-      PYTHON_VERSION: "3.4.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python37"
-      PYTHON_VERSION: "3.7.x"
-      PYTHON_ARCH: "32"
-
-    - PYTHON: "C:\\Python37-x64"
-      PYTHON_VERSION: "3.7.x"
-      PYTHON_ARCH: "64"
-version: "2.0.0.{build}"
-init:
-  - cmd: python --version
 build_script:
-  - cmd: python setup.py install
+  - cmd: cargo build
+
 test_script:
-  - cmd: python setup.py test
+  - cmd: cargo test
+  - cmd: c:\python35\python.exe tests/test_csv2html.py
+
+artifacts:
+  - path: '$(CSV2HTML_COMMAND)'
