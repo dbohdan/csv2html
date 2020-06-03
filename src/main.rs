@@ -241,10 +241,16 @@ fn main() {
         Ok(_) => exit(exitcode::OK),
         Err(ref err) => match err {
             errors::Error::OpenInput { filename: _, source: _ }
-            | errors::Error::OpenOutput { filename: _, source: _ } => {
+            | errors::Error::OpenOutput { filename: _, source: _ }
+            | errors::Error::WriteOutput { source: _ } => {
                 eprintln!("{}", err);
                 exit(exitcode::IOERR);
-            }
+            },
+            errors::Error::ParseHeader { source: _ }
+            | errors::Error::ParseRow { source: _ } => {
+                eprintln!("{}", err);
+                exit(exitcode::DATAERR);
+            },
             _ => {
                 eprintln!("{}", err);
                 exit(exitcode::SOFTWARE);

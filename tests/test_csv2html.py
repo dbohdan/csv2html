@@ -116,6 +116,15 @@ class TestCsv2html(unittest.TestCase):
         )
         self.assertEqual(completed.returncode, self.exitCodes['EX_IOERR'])
 
+    def test_garbage_file(self):
+        completed = run_csv2html(filename='garbage')
+
+        self.assertRegex(
+            completed.stderr.decode('utf-8'),
+            r'.*Can not parse.*',
+        )
+        self.assertEqual(completed.returncode, self.exitCodes['EX_DATAERR'])
+
 
 if __name__ == '__main__':
     unittest.main()
