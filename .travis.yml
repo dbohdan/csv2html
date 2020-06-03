@@ -1,5 +1,5 @@
 language: rust
-cache: cargo
+cache: /tmp/travis/csv2html-rust/
 addons:
   apt:
     packages:
