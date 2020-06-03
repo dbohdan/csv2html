@@ -108,9 +108,9 @@ ARGS:
 
 The following command reads the data from `test/test.csv` and writes the corresponding HTML table to `test.html`:
 
-    csv2html -o test.html test/test.csv
+    csv2html -o test.html tests/test.csv
 
-The example below takes semicolon-delimited data from `pub.csv`, starting with row 267. The first column of the table is replaced with the row numbers starting at 1 (except in the header row). The output is redirected to the file `pub.html`.
+The next command takes semicolon-delimited data from `pub.csv`, starting with row 267.  The first column of the table is replaced with the row number starting at 1 (except in the header row, which is untouched).  The output is redirected to the file `pub.html`.
 
     csv2html pub.csv -d \; -r -s 267 > pub.html
 
@@ -121,4 +121,4 @@ Same as above, but this time the output is a full HTML document instead of just 
 
 ## License
 
-Three-clause ("new" or "revised") BSD.  See the file license.
+Three-clause ("new" or "revised") BSD.  See the file `LICENSE`.
