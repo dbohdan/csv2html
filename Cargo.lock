@@ -83,7 +83,7 @@ dependencies = [
 
 [[package]]
 name = "csv2html"
-version = "3.0.0"
+version = "3.0.1"
 dependencies = [
  "clap",
  "csv",
