@@ -63,7 +63,7 @@ linker = "/usr/bin/i686-w64-mingw32-gcc"
 
     git clone https://github.com/dbohdan/csv2html
     cd csv2html
-    make release TARGET=i686-pc-windows-gnu
+    RUSTFLAGS="-C panic=abort -C lto" make release TARGET=i686-pc-windows-gnu
     cp "/tmp/$USER/cargo/csv2html/i686-pc-windows-gnu/release/csv2html.exe" .
 
 
