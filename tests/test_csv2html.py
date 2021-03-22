@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 # Integration tests for csv2html.
-# Copyright (c) 2013, 2014, 2017, 2020 D. Bohdan.
+# Copyright (c) 2013, 2014, 2017, 2020, 2021 D. Bohdan.
 # License: BSD (3-clause).  See the file LICENSE.
 
 import os.path
@@ -60,6 +60,12 @@ class TestCsv2html(unittest.TestCase):
     def test_default(self):
         self.assertEqual(
             run_csv2html().stdout,
+            read_file('test-default.html'),
+        )
+
+    def test_default_tab(self):
+        self.assertEqual(
+            run_csv2html('--delimiter', '\t', filename='test.tsv').stdout,
             read_file('test-default.html'),
         )
 
