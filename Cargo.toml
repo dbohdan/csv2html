@@ -3,6 +3,13 @@ name = "csv2html"
 version = "3.0.1"
 authors = ["D. Bohdan"]
 edition = "2018"
+license = "BSD-3-Clause"
+readme = "README.md"
+repository = "https://github.com/dbohdan/csv2html"
+homepage = "https://github.com/dbohdan/csv2html"
+description = "Convert CSV files to HTML tables"
+keywords = ["csv"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 clap = "2.33"
