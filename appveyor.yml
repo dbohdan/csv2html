@@ -2,6 +2,7 @@ environment:
   CSV2HTML_COMMAND: target\debug\csv2html.exe
   RUST_VERSION: 1.43.0
   CARGO_PATH: c:\users\appveyor\.cargo
+  CARGO_HTTP_CHECK_REVOKE: false
 
 cache:
   - '$(CARGO_PATH) -> appveyor.yml, Cargo.lock, Cargo.toml'
