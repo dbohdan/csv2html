@@ -12,6 +12,12 @@ The older Python version is preserved in the branch [`python`](https://github.co
 
 Prebuilt Linux and Windows binaries are available.  They are attached to releases on the [Releases](https://github.com/dbohdan/csv2html/releases) page.
 
+### Installing with Cargo
+
+```shell
+cargo install csv2html
+```
+
 ### Building on Debian and Ubuntu
 
 Follow the instructions to build a static Linux binary of `csv2html` from source on recent Debian and Ubuntu.
@@ -28,7 +34,7 @@ rustup target add x86_64-unknown-linux-musl
 sudo apt install build-essential musl-tools python3
 ```
 
-3\. Clone this repository.  Build and install the binary.
+3\. Clone this repository.  Build the binary.
 
     git clone https://github.com/dbohdan/csv2html
     cd csv2html
