@@ -31,9 +31,7 @@ sudo apt install build-essential musl-tools python3
 
     git clone https://github.com/dbohdan/csv2html
     cd csv2html
-    make test
-    make release
-    sudo make install "BUILD_USER=$USER"
+    cargo build --release
 
 ### Cross-compiling for Windows
 
@@ -62,8 +60,7 @@ linker = "/usr/bin/i686-w64-mingw32-gcc"
 
     git clone https://github.com/dbohdan/csv2html
     cd csv2html
-    RUSTFLAGS="-C panic=abort -C lto" make release TARGET=i686-pc-windows-gnu
-    cp "/tmp/$USER/cargo/csv2html/i686-pc-windows-gnu/release/csv2html.exe" .
+    cargo build --release --target i686-pc-windows-gnu 
 
 
 ## Command line arguments
