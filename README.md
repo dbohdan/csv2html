@@ -38,7 +38,8 @@ sudo apt install build-essential musl-tools python3
 
     git clone https://github.com/dbohdan/csv2html
     cd csv2html
-    cargo build --release
+    make test
+    make release-linux
 
 ### Cross-compiling for Windows
 
@@ -67,7 +68,7 @@ linker = "/usr/bin/i686-w64-mingw32-gcc"
 
     git clone https://github.com/dbohdan/csv2html
     cd csv2html
-    cargo build --release --target i686-pc-windows-gnu 
+    make release-windows
 
 
 ## Command line arguments
