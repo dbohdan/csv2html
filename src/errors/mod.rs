@@ -1,6 +1,6 @@
 // csv2html
 // Copyright (c) 2013, 2014, 2017, 2020 D. Bohdan.
-// License: BSD (3-clause).  See the file LICENSE.
+// License: BSD (3-clause). See the file LICENSE.
 
 use snafu::Snafu;
 

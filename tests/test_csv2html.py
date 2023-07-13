@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # Integration tests for csv2html.
 # Copyright (c) 2013, 2014, 2017, 2020, 2021 D. Bohdan.
-# License: BSD (3-clause).  See the file LICENSE.
+# License: BSD (3-clause). See the file LICENSE.
 
 import os.path
 import sys
@@ -46,7 +46,7 @@ class TestCsv2html(unittest.TestCase):
         self.maxDiff = None
 
         # The sendmail exit codes are convenient for scripting, but they are
-        # unavailable in Python on Windows.  We hard code them here instead.
+        # unavailable in Python on Windows. We hard code them here instead.
         # The numbers come from POSIX sysexit.h.
         self.exitCodes = {
             'EX_OK': 0,
