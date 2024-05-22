@@ -1,10 +1,26 @@
 name: CI
-on: [push]
+on: [push, pull_request]
+
+env:
+  CSV2HTML_COMMAND: target/debug/csv2html
+
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+        - macos-latest
+        - ubuntu-latest
+        - windows-latest
     steps:
+    - name: 'Disable `autocrlf` in Git'
+      run: git config --global core.autocrlf false
     - name: Checkout
-      uses: actions/checkout@v1
-    - name: Run CI script
-      run: .github/workflows/ci.sh
+      uses: actions/checkout@v4
+    - name: Run tests
+      run: |
+        cargo build
+
+        cargo test
+        python3 tests/test_csv2html.py
