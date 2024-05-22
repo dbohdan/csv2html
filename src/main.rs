@@ -10,7 +10,9 @@ use std::{
     process::exit,
 };
 
-use clap::{App, Arg};
+use clap::{
+    crate_description, crate_name, crate_version, Arg, ArgAction, Command,
+};
 use csv::ReaderBuilder;
 use exitcode;
 use snafu::{ensure, ResultExt};
@@ -34,60 +36,74 @@ struct Opts {
 }
 
 fn cli() -> errors::Result<Opts> {
-    let matches = App::new("csv2html")
-        .version("3.0.1")
-        .about("Convert CSV files to HTML tables")
-        .arg(Arg::with_name("input").help("Input file").index(1))
+    let matches = Command::new(crate_name!())
+        .version(crate_version!())
+        .about(crate_description!())
         .arg(
-            Arg::with_name("output")
-                .short("o")
+            Arg::new("input")
+                .help("Input file")
+                .default_value("-")
+                .hide_default_value(true),
+        )
+        .arg(
+            Arg::new("output")
+                .short('o')
                 .long("output")
                 .value_name("OUTPUT")
-                .help("Output file"),
+                .help("Output file")
+                .default_value("-")
+                .hide_default_value(true),
         )
         .arg(
-            Arg::with_name("title")
-                .short("t")
+            Arg::new("title")
+                .short('t')
                 .long("title")
                 .value_name("TITLE")
-                .help("HTML document title"),
+                .help("HTML document title")
+                .default_value("")
+                .hide_default_value(true),
         )
         .arg(
-            Arg::with_name("delimiter")
-                .short("d")
+            Arg::new("delimiter")
+                .short('d')
                 .long("delimiter")
                 .value_name("DELIM")
-                .help("Field delimiter character for CSV (',' by default)"),
+                .help("Field delimiter character for CSV (',' by default)")
+                .default_value(",")
+                .hide_default_value(true),
         )
         .arg(
-            Arg::with_name("start")
-                .short("s")
+            Arg::new("start")
+                .short('s')
                 .long("start")
                 .value_name("N")
-                .help("Skip the first N-1 rows; start at row N"),
+                .help("Skip the first N-1 rows; start at row N")
+                .default_value("0")
+                .hide_default_value(true),
         )
         .arg(
-            Arg::with_name("renumber")
-                .short("r")
+            Arg::new("renumber")
+                .short('r')
                 .long("renumber")
-                .help("Replace the first column with row numbers"),
+                .help("Replace the first column with row numbers")
+                .action(ArgAction::SetTrue),
         )
         .arg(
-            Arg::with_name("no-header")
-                .short("n")
+            Arg::new("no-header")
+                .short('n')
                 .long("no-header")
-                .help("Do not use the first row of the input as the header"),
+                .help("Do not use the first row of the input as the header")
+                .action(ArgAction::SetTrue),
         )
         .arg(
-            Arg::with_name("complete-document")
-                .short("c")
+            Arg::new("complete-document")
+                .short('c')
                 .long("complete-document")
-                .help(
-                    "Output a complete HTML document instead of only a table",
-                ),
+                .help("Output a complete HTML document instead of only a table")
+                .action(ArgAction::SetTrue),
         )
         .arg(
-            Arg::with_name("table")
+            Arg::new("table")
                 .long("table")
                 .value_name("ATTRS")
                 .help(
@@ -95,36 +111,42 @@ fn cli() -> errors::Result<Opts> {
 'foo=\"bar\" baz' results in the output <table \
 foo=\"bar\" baz>...</table>); it is up to the \
 user to ensure the result is valid HTML",
-                ),
+                )
+                .default_value("")
+                .hide_default_value(true),
         )
         .arg(
-            Arg::with_name("tr")
+            Arg::new("tr")
                 .long("tr")
                 .value_name("ATTRS")
-                .help("Attributes for <tr>"),
+                .help("Attributes for <tr>")
+                .default_value("")
+                .hide_default_value(true),
         )
         .arg(
-            Arg::with_name("th")
+            Arg::new("th")
                 .long("th")
                 .value_name("ATTRS")
-                .help("Attributes for <th>"),
+                .help("Attributes for <th>")
+                .default_value("")
+                .hide_default_value(true),
         )
         .arg(
-            Arg::with_name("td")
+            Arg::new("td")
                 .long("td")
                 .value_name("ATTRS")
-                .help("Attributes for <td>"),
+                .help("Attributes for <td>")
+                .default_value("")
+                .hide_default_value(true),
         )
         .get_matches();
 
-    let input = matches.value_of("input").unwrap_or("-").to_string();
+    let start_s = matches.get_one::<String>("start").unwrap().to_string();
 
-    let output = matches.value_of("output").unwrap_or("-").to_string();
-
-    let start_s = matches.value_of("start").unwrap_or("0");
     let start = start_s.parse::<usize>().context(errors::CLIStartSnafu {})?;
 
-    let delimiter_s = matches.value_of("delimiter").unwrap_or(",");
+    let delimiter_s = matches.get_one::<String>("delimiter").unwrap();
+
     ensure!(
         delimiter_s.len() == 1,
         errors::CLIDelimiterSnafu {
@@ -134,21 +156,19 @@ user to ensure the result is valid HTML",
 
     let delimiter = delimiter_s.bytes().nth(0).unwrap();
 
-    let title = matches.value_of("title").unwrap_or("").to_string();
-
     Ok(Opts {
-        input: input,
-        output: output,
+        input: matches.get_one::<String>("input").unwrap().to_string(),
+        output: matches.get_one::<String>("output").unwrap().to_string(),
         start: start,
         delimiter: delimiter,
-        title: title,
-        renumber: matches.is_present("renumber"),
-        header: !matches.is_present("no-header"),
-        complete_document: matches.is_present("complete-document"),
-        table_attrs: matches.value_of("table").unwrap_or("").to_string(),
-        tr_attrs: matches.value_of("tr").unwrap_or("").to_string(),
-        th_attrs: matches.value_of("th").unwrap_or("").to_string(),
-        td_attrs: matches.value_of("td").unwrap_or("").to_string(),
+        title: matches.get_one::<String>("title").unwrap().to_string(),
+        renumber: matches.get_flag("renumber"),
+        header: !matches.get_flag("no-header"),
+        complete_document: matches.get_flag("complete-document"),
+        table_attrs: matches.get_one::<String>("table").unwrap().to_string(),
+        tr_attrs: matches.get_one::<String>("tr").unwrap().to_string(),
+        th_attrs: matches.get_one::<String>("th").unwrap().to_string(),
+        td_attrs: matches.get_one::<String>("td").unwrap().to_string(),
     })
 }
 
