@@ -1,5 +1,5 @@
 // csv2html
-// Copyright (c) 2013, 2014, 2017, 2020 D. Bohdan.
+// Copyright (c) 2013-2014, 2017, 2020, 2024 D. Bohdan.
 // License: BSD (3-clause). See the file LICENSE.
 
 #![recursion_limit = "1024"]
@@ -122,12 +122,12 @@ user to ensure the result is valid HTML",
     let output = matches.value_of("output").unwrap_or("-").to_string();
 
     let start_s = matches.value_of("start").unwrap_or("0");
-    let start = start_s.parse::<usize>().context(errors::CLIStart {})?;
+    let start = start_s.parse::<usize>().context(errors::CLIStartSnafu {})?;
 
     let delimiter_s = matches.value_of("delimiter").unwrap_or(",");
     ensure!(
         delimiter_s.len() == 1,
-        errors::CLIDelimiter {
+        errors::CLIDelimiterSnafu {
             delimiter: delimiter_s
         }
     );
@@ -159,7 +159,7 @@ fn app() -> errors::Result<()> {
         Box::new(BufReader::new(std::io::stdin()))
     } else {
         Box::new(BufReader::new(File::open(&opts.input).context(
-            errors::OpenInput {
+            errors::OpenInputSnafu {
                 filename: &opts.input,
             },
         )?))
@@ -169,7 +169,7 @@ fn app() -> errors::Result<()> {
         Box::new(BufWriter::new(std::io::stdout()))
     } else {
         Box::new(BufWriter::new(File::create(&opts.output).context(
-            errors::OpenOutput {
+            errors::OpenOutputSnafu {
                 filename: &opts.output,
             },
         )?))
@@ -180,7 +180,7 @@ fn app() -> errors::Result<()> {
         "{}",
         tablegen::start(opts.complete_document, &opts.title, &opts.table_attrs)
     )
-    .context(errors::WriteOutput {})?;
+    .context(errors::WriteOutputSnafu {})?;
 
     let mut csv_reader = ReaderBuilder::new()
         .flexible(true)
@@ -191,7 +191,7 @@ fn app() -> errors::Result<()> {
     if opts.header {
         let headers = csv_reader
             .headers()
-            .context(errors::ParseHeader {})?
+            .context(errors::ParseHeaderSnafu {})?
             .iter()
             .collect::<Vec<_>>();
 
@@ -200,7 +200,7 @@ fn app() -> errors::Result<()> {
             "{}",
             tablegen::row(&headers, true, &opts.tr_attrs, &opts.th_attrs)
         )
-        .context(errors::WriteOutput {})?;
+        .context(errors::WriteOutputSnafu {})?;
     }
 
     let mut i: u64 = 1;
@@ -210,7 +210,7 @@ fn app() -> errors::Result<()> {
     }
 
     for result in csv_reader.records().skip(skip) {
-        let record = result.context(errors::ParseRow {})?;
+        let record = result.context(errors::ParseRowSnafu {})?;
         let mut row = record.iter().collect::<Vec<_>>();
 
         let i_s = i.to_string();
@@ -224,13 +224,13 @@ fn app() -> errors::Result<()> {
             "{}",
             tablegen::row(&row, false, &opts.tr_attrs, &opts.td_attrs)
         )
-        .context(errors::WriteOutput {})?;
+        .context(errors::WriteOutputSnafu {})?;
 
         i += 1;
     }
 
     write!(output, "{}", tablegen::end(opts.complete_document))
-        .context(errors::WriteOutput {})?;
+        .context(errors::WriteOutputSnafu {})?;
 
     Ok(())
 }
