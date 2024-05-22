@@ -1,8 +1,5 @@
 # csv2html
 
-[![GitHub Actions CI status.](https://github.com/dbohdan/csv2html/actions/workflows/ci.yml/badge.svg)](https://gthub.com/dbohdan/csv2html/actions/workflows/ci.yml)
-[![AppVeyor CI Build Status](https://ci.appveyor.com/api/projects/status/github/dbohdan/csv2html?branch=master&svg=true)](https://ci.appveyor.com/project/dbohdan/csv2html)
-
 This command line utility converts [CSV files](http://en.wikipedia.org/wiki/Comma-separated_values) to HTML tables and complete HTML documents. It requires Rust 1.43 or later to build and Python 3.5 or later to test. By default it uses the first row of the CSV file as the [header](https://developer.mozilla.org/en/docs/Web/HTML/Element/th) of the HTML table.
 
 The older Python version is preserved in the branch [`python`](https://github.com/dbohdan/csv2html/tree/python).
