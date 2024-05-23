@@ -2,42 +2,45 @@
 # Integration tests for csv2html.
 # Copyright (c) 2013-2014, 2017, 2020, 2021, 2024 D. Bohdan.
 # License: BSD (3-clause). See the file LICENSE.
+from __future__ import annotations
 
-import os.path
-import sys
 import unittest
-
 from os import environ
-from subprocess import run, PIPE
-
+from pathlib import Path
+from subprocess import run
+from typing import TextIO
 
 COMMAND = environ.get("CSV2HTML_COMMAND", "csv2html")
-TEST_PATH = os.path.dirname(os.path.realpath(__file__))
+TEST_PATH = Path(__file__).resolve().parent
 
 
-def data_file(filename):
-    return os.path.join(TEST_PATH, filename)
+def data_file(filename: str) -> Path:
+    if filename == "-":
+        msg = "need a real filename"
+        raise ValueError(msg)
+
+    return TEST_PATH / filename
 
 
-def read_file(filename):
-    with open(data_file(filename), "rb") as f:
-        content = f.read()
-    return content
+def read_file(filename: str) -> bytes:
+    return data_file(filename).read_bytes()
 
 
-def run_csv2html(*args, filename="test.csv", stdin=None):
-    command = [COMMAND]
+def run_csv2html(
+    *args: str, filename: str | None = "test.csv", stdin: TextIO | None = None,
+):
+    command: list[str | Path] = [COMMAND]
 
     if filename is not None:
-        command.append(filename if filename == "-" else data_file(filename))
+        command.append("-" if filename == "-" else data_file(filename))
 
     command.extend(args)
 
     return run(
         command,
+        capture_output=True,
+        check=False,
         stdin=stdin,
-        stderr=PIPE,
-        stdout=PIPE,
     )
 
 
@@ -76,7 +79,7 @@ class TestCsv2html(unittest.TestCase):
         )
 
     def test_stdin(self):
-        with open(data_file("test.csv")) as f:
+        with data_file("test.csv").open() as f:
             self.assertEqual(
                 run_csv2html(filename="-", stdin=f).stdout,
                 read_file("test-default.html"),
