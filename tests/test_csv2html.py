@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 # Integration tests for csv2html.
-# Copyright (c) 2013, 2014, 2017, 2020, 2021 D. Bohdan.
+# Copyright (c) 2013-2014, 2017, 2020, 2021, 2024 D. Bohdan.
 # License: BSD (3-clause). See the file LICENSE.
 
 import os.path
@@ -30,10 +30,15 @@ def run_csv2html(
     filename='test.csv',
     stdin=None
 ):
-    path = filename if filename == '-' else data_file(filename)
+    command = [COMMAND]
+
+    if filename is not None:
+        command.append(filename if filename == '-' else data_file(filename))
+
+    command.extend(args)
 
     return run(
-        [COMMAND, path, *args],
+        command,
         stdin=stdin,
         stderr=PIPE,
         stdout=PIPE,
@@ -56,6 +61,12 @@ class TestCsv2html(unittest.TestCase):
             'EX_SOFTWARE': 70,
             'EX_IOERR': 74
         }
+
+    def test_version(self):
+        self.assertRegex(
+            run_csv2html('--version', filename=None).stdout,
+            br'\d+\.\d+\.\d+$',
+        )
 
     def test_default(self):
         self.assertEqual(
