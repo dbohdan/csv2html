@@ -11,7 +11,7 @@ from os import environ
 from subprocess import run, PIPE
 
 
-COMMAND = environ.get('CSV2HTML_COMMAND', 'csv2html')
+COMMAND = environ.get("CSV2HTML_COMMAND", "csv2html")
 TEST_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -20,20 +20,16 @@ def data_file(filename):
 
 
 def read_file(filename):
-    with open(data_file(filename), 'rb') as f:
+    with open(data_file(filename), "rb") as f:
         content = f.read()
     return content
 
 
-def run_csv2html(
-    *args,
-    filename='test.csv',
-    stdin=None
-):
+def run_csv2html(*args, filename="test.csv", stdin=None):
     command = [COMMAND]
 
     if filename is not None:
-        command.append(filename if filename == '-' else data_file(filename))
+        command.append(filename if filename == "-" else data_file(filename))
 
     command.extend(args)
 
@@ -46,7 +42,6 @@ def run_csv2html(
 
 
 class TestCsv2html(unittest.TestCase):
-
     def setUp(self):
         self.maxDiff = None
 
@@ -54,119 +49,120 @@ class TestCsv2html(unittest.TestCase):
         # unavailable in Python on Windows. We hard code them here instead.
         # The numbers come from POSIX sysexit.h.
         self.exitCodes = {
-            'EX_OK': 0,
-            'EX_DATAERR': 65,
-            'EX_NOINPUT': 66,
-            'EX_UNAVAILABLE': 69,
-            'EX_SOFTWARE': 70,
-            'EX_IOERR': 74
+            "EX_OK": 0,
+            "EX_DATAERR": 65,
+            "EX_NOINPUT": 66,
+            "EX_UNAVAILABLE": 69,
+            "EX_SOFTWARE": 70,
+            "EX_IOERR": 74,
         }
 
     def test_version(self):
         self.assertRegex(
-            run_csv2html('--version', filename=None).stdout,
-            br'\d+\.\d+\.\d+$',
+            run_csv2html("--version", filename=None).stdout,
+            rb"\d+\.\d+\.\d+$",
         )
 
     def test_default(self):
         self.assertEqual(
             run_csv2html().stdout,
-            read_file('test-default.html'),
+            read_file("test-default.html"),
         )
 
     def test_default_tab(self):
         self.assertEqual(
-            run_csv2html('--delimiter', '\t', filename='test.tsv').stdout,
-            read_file('test-default.html'),
+            run_csv2html("--delimiter", "\t", filename="test.tsv").stdout,
+            read_file("test-default.html"),
         )
 
     def test_stdin(self):
-        with open(data_file('test.csv')) as f:
+        with open(data_file("test.csv")) as f:
             self.assertEqual(
-                run_csv2html(filename='-', stdin=f).stdout,
-                read_file('test-default.html'),
+                run_csv2html(filename="-", stdin=f).stdout,
+                read_file("test-default.html"),
             )
 
     def test_completedoc_and_title(self):
         self.assertEqual(
-            run_csv2html(
-                '--title', 'Foo & Bar',
-                '--complete-document'
-            ).stdout,
-            read_file('test-c-t.html'),
+            run_csv2html("--title", "Foo & Bar", "--complete-document").stdout,
+            read_file("test-c-t.html"),
         )
 
     def test_renum(self):
         self.assertEqual(
-            run_csv2html('--renumber').stdout,
-            read_file('test-r.html'),
+            run_csv2html("--renumber").stdout,
+            read_file("test-r.html"),
         )
 
     def test_no_header(self):
         self.assertEqual(
-            run_csv2html('-n').stdout,
-            read_file('test-n.html'),
+            run_csv2html("-n").stdout,
+            read_file("test-n.html"),
         )
 
     def test_start_5(self):
         self.assertEqual(
-            run_csv2html('--start', '5').stdout,
-            read_file('test-s5.html'),
+            run_csv2html("--start", "5").stdout,
+            read_file("test-s5.html"),
         )
 
     def test_start_0_and_no_header(self):
         self.assertEqual(
-            run_csv2html('--start', '0', '--no-header').stdout,
-            read_file('test-s0-n.html'),
+            run_csv2html("--start", "0", "--no-header").stdout,
+            read_file("test-s0-n.html"),
         )
 
     def test_start_1_and_no_header(self):
         self.assertEqual(
-            run_csv2html('--start', '1', '--no-header').stdout,
-            read_file('test-s1-n.html'),
+            run_csv2html("--start", "1", "--no-header").stdout,
+            read_file("test-s1-n.html"),
         )
 
     def test_start_2_and_no_header(self):
         self.assertEqual(
-            run_csv2html('-s', '2', '--no-header').stdout,
-            read_file('test-s2-n.html'),
+            run_csv2html("-s", "2", "--no-header").stdout,
+            read_file("test-s2-n.html"),
         )
 
     def test_start_5_and_no_header(self):
         self.assertEqual(
-            run_csv2html('--start', '5', '--no-header').stdout,
-            read_file('test-s5-n.html'),
+            run_csv2html("--start", "5", "--no-header").stdout,
+            read_file("test-s5-n.html"),
         )
 
     def test_attrs(self):
         self.assertEqual(
             run_csv2html(
-                '--table', 'class="foo" id="bar"',
-                '--tr', 'class="row"',
-                '--th', 'class="hcell"',
-                '--td', 'class="cell"',
+                "--table",
+                'class="foo" id="bar"',
+                "--tr",
+                'class="row"',
+                "--th",
+                'class="hcell"',
+                "--td",
+                'class="cell"',
             ).stdout,
-            read_file('test-attrs.html'),
+            read_file("test-attrs.html"),
         )
 
     def test_no_file(self):
-        completed = run_csv2html(filename='does-not-exist.csv')
+        completed = run_csv2html(filename="does-not-exist.csv")
 
         self.assertRegex(
-            completed.stderr.decode('utf-8'),
-            r'.*Can not open the input file.*',
+            completed.stderr.decode("utf-8"),
+            r".*Can not open the input file.*",
         )
-        self.assertEqual(completed.returncode, self.exitCodes['EX_IOERR'])
+        self.assertEqual(completed.returncode, self.exitCodes["EX_IOERR"])
 
     def test_garbage_file(self):
-        completed = run_csv2html(filename='garbage')
+        completed = run_csv2html(filename="garbage")
 
         self.assertRegex(
-            completed.stderr.decode('utf-8'),
-            r'.*Can not parse.*',
+            completed.stderr.decode("utf-8"),
+            r".*Can not parse.*",
         )
-        self.assertEqual(completed.returncode, self.exitCodes['EX_DATAERR'])
+        self.assertEqual(completed.returncode, self.exitCodes["EX_DATAERR"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
