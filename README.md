@@ -71,37 +71,27 @@ linker = "/usr/bin/i686-w64-mingw32-gcc"
 ## Command line arguments
 
 ```none
-csv2html 3.0.0
 Convert CSV files to HTML tables
 
-USAGE:
-    csv2html [FLAGS] [OPTIONS] [input]
+Usage: csv2html [OPTIONS] [input]
 
-FLAGS:
-    -c, --complete-document    Output a complete HTML document instead of only a
-                               table
-    -h, --help                 Prints help information
-    -n, --no-header            Do not use the first row of the input as the
-                               header
-    -r, --renumber             Replace the first column with row numbers
-    -V, --version              Prints version information
+Arguments:
+  [input]  Input file
 
-OPTIONS:
-    -d, --delimiter <DELIM>    Field delimiter character for CSV (',' by
-                               default)
-    -o, --output <OUTPUT>      Output file
-    -s, --start <N>            Skip the first N-1 rows; start at row N
-        --table <ATTRS>        HTML attributes for the tag <table> (e.g.,
-                               --table 'foo="bar" baz' results in the output
-                               <table foo="bar" baz>...</table>); it is up to
-                               the user to ensure the result is valid HTML
-        --td <ATTRS>           Attributes for <td>
-        --th <ATTRS>           Attributes for <th>
-    -t, --title <TITLE>        HTML document title
-        --tr <ATTRS>           Attributes for <tr>
-
-ARGS:
-    <input>    Input file
+Options:
+  -o, --output <OUTPUT>    Output file
+  -t, --title <TITLE>      HTML document title
+  -d, --delimiter <DELIM>  Field delimiter character for CSV (',' by default)
+  -s, --start <N>          Skip the first N-1 rows; start at row N
+  -r, --renumber           Replace the first column with row numbers
+  -n, --no-header          Do not use the first row of the input as the header
+  -c, --complete-document  Output a complete HTML document instead of only a table
+      --table <ATTRS>      HTML attributes for the tag <table> (e.g., --table 'foo="bar" baz' results in the output <table foo="bar" baz>...</table>); it is up to the user to ensure the result is valid HTML
+      --tr <ATTRS>         Attributes for <tr>
+      --th <ATTRS>         Attributes for <th>
+      --td <ATTRS>         Attributes for <td>
+  -h, --help               Print help
+  -V, --version            Print version
 ```
 
 
