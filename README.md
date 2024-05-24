@@ -1,7 +1,7 @@
 # csv2html
 
 This command-line utility converts [CSV files](http://en.wikipedia.org/wiki/Comma-separated_values) to HTML tables and complete HTML documents.
-It requires Rust 1.74 or later to build and Python 3.7 or later to test.
+It requires Rust 1.74 or later to build.
 By default, it uses the first row of the CSV file as the [header](https://developer.mozilla.org/en/docs/Web/HTML/Element/th) of the HTML table.
 
 The original Python version of csv2html is preserved in the branch [`python`](https://github.com/dbohdan/csv2html/tree/python).
@@ -32,7 +32,7 @@ rustup target add x86_64-unknown-linux-musl
 2\. Install the build and test dependencies.
 
 ```sh
-sudo apt install build-essential musl-tools python3
+sudo apt install build-essential musl-tools
 ```
 
 3\. Clone this repository.

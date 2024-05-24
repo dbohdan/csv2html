@@ -23,4 +23,4 @@ jobs:
         cargo build
 
         cargo test
-        python3 tests/test_csv2html.py
+        cargo test -- --ignored

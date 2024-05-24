@@ -20,7 +20,7 @@ release-windows:
 test: debug test-unit test-integration
 
 test-integration:
-	CSV2HTML_COMMAND="$(CSV2HTML_COMMAND)" python3 tests/test_csv2html.py
+	CSV2HTML_COMMAND="$(CSV2HTML_COMMAND)" cargo test -- --ignored
 
 test-unit:
 	cargo test
