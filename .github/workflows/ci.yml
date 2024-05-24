@@ -15,9 +15,8 @@ jobs:
       run: git config --global core.autocrlf false
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install dependencies
-      run: |
-        cargo install just
+    - name: Set up just task runner
+      uses: extractions/setup-just@v2
     - name: Run tests
       run: |
         just test
