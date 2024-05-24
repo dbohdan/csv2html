@@ -146,15 +146,23 @@ user to ensure the result is valid HTML",
     let start = start_s.parse::<usize>().context(errors::CLIStartSnafu {})?;
 
     let delimiter_s = matches.get_one::<String>("delimiter").unwrap();
+    let tab_escape = "\\t";
 
     ensure!(
-        delimiter_s.len() == 1,
+        delimiter_s.len() == 1 || delimiter_s == tab_escape,
         errors::CLIDelimiterSnafu {
             delimiter: delimiter_s
         }
     );
 
-    let delimiter = delimiter_s.bytes().nth(0).unwrap();
+    let delimiter = if delimiter_s == tab_escape {
+        "\t"
+    } else {
+        delimiter_s
+    }
+    .bytes()
+    .nth(0)
+    .unwrap();
 
     Ok(Opts {
         input: matches.get_one::<String>("input").unwrap().to_string(),

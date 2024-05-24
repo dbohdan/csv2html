@@ -72,7 +72,13 @@ class TestCsv2html(unittest.TestCase):
             read_file("test-default.html"),
         )
 
-    def test_default_tab(self):
+    def test_tab_escape(self):
+        self.assertEqual(
+            run_csv2html("--delimiter", "\\t", filename="test.tsv").stdout,
+            read_file("test-default.html"),
+        )
+
+    def test_tab_literal(self):
         self.assertEqual(
             run_csv2html("--delimiter", "\t", filename="test.tsv").stdout,
             read_file("test-default.html"),

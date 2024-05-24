@@ -109,15 +109,13 @@ Same as above, but this time the output is a full HTML document instead of just 
 
     csv2html pub.csv -d \; -r -s 267 -c > pub.html
 
-If the input file is tab-delimited, you need to pass a literal tab character as the delimiter. In a POSIX-compatible shell you can do it like this:
+If the input file is tab-delimited, use `\t` as the deliminter argument.
 
-    csv2html --delimiter "$(printf '\t')" tests/test.tsv
+    csv2html --delimiter '\t' tests/test.tsv
 
-In the Command Prompt and batch files on Windows you will need to set [`%tab%` to the tab character](https://stackoverflow.com/questions/10878138/how-to-create-tab-in-cmd). `tab.cmd` is included in this repository.
+    csv2html-win32.exe --delimiter \t tests/test.tsv
 
-    call tab.cmd
-    csv2html-win32.exe --delimiter "%tab%" tests/test.tsv
-
+`\t` is the only [backslash escape sequence](https://en.wikipedia.org/wiki/Escape_sequences_in_C) that is implemented.
 
 ## License
 
