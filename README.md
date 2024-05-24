@@ -33,6 +33,7 @@ rustup target add x86_64-unknown-linux-musl
 
 ```sh
 sudo apt install build-essential musl-tools
+cargo install just
 ```
 
 3\. Clone this repository.
@@ -41,8 +42,8 @@ sudo apt install build-essential musl-tools
 ```sh
 git clone https://github.com/dbohdan/csv2html
 cd csv2html
-make test
-make release-linux
+just test
+just release-linux
 ```
 
 ### Cross-compiling for Windows
@@ -60,6 +61,7 @@ rustup target add i686-pc-windows-gnu
 
 ```sh
 sudo apt install build-essential mingw-w64
+cargo install just
 ```
 
 3\. Configure Cargo for cross-compilation.
@@ -76,7 +78,7 @@ linker = "/usr/bin/i686-w64-mingw32-gcc"
 ```
 git clone https://github.com/dbohdan/csv2html
 cd csv2html
-make release-windows
+just release-windows
 ```
 
 ## Command-line arguments

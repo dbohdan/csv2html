@@ -1,9 +1,6 @@
 name: CI
 on: [push, pull_request]
 
-env:
-  CSV2HTML_COMMAND: target/debug/csv2html
-
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -18,9 +15,9 @@ jobs:
       run: git config --global core.autocrlf false
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        cargo install just
     - name: Run tests
       run: |
-        cargo build
-
-        cargo test
-        cargo test -- --ignored
+        just test
