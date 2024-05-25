@@ -1,8 +1,7 @@
 # csv2html
 
 This command-line utility converts [CSV files](http://en.wikipedia.org/wiki/Comma-separated_values) to HTML tables and complete HTML documents.
-It requires Rust 1.74 or later to build.
-By default, it uses the first row of the CSV file as the [header](https://developer.mozilla.org/en/docs/Web/HTML/Element/th) of the HTML table.
+It can use the first row of the CSV file as the [header](https://developer.mozilla.org/en/docs/Web/HTML/Element/th) of the table, and does so by default.
 
 The original Python version of csv2html is preserved in the branch [`python`](https://github.com/dbohdan/csv2html/tree/python).
 
@@ -11,6 +10,8 @@ The original Python version of csv2html is preserved in the branch [`python`](ht
 
 Prebuilt Linux and Windows binaries are available.
 They are attached to releases on the ["Releases"](https://github.com/dbohdan/csv2html/releases) page.
+
+csv2html requires Rust 1.74 or later to build.
 
 ### Installing with Cargo
 
@@ -23,7 +24,7 @@ cargo install csv2html
 Follow the instructions to build a static Linux binary of csv2html from the source code on recent Debian and Ubuntu.
 
 1\. Install [Rustup](https://rustup.rs/).
-    Through Rustup add the stable musl libc target for your CPU.
+    Through Rustup, add the stable musl libc target for your CPU.
 
 ```sh
 rustup target add x86_64-unknown-linux-musl
@@ -51,7 +52,7 @@ just release-linux
 Follow the instructions to build a 32-bit Windows binary of csv2html on recent Debian and Ubuntu.
 
 1\. Install [Rustup](https://rustup.rs/).
-    Through Rustup add the i686 GNU ABI Windows target.
+    Through Rustup, add the i686 GNU ABI Windows target.
 
 ```sh
 rustup target add i686-pc-windows-gnu
@@ -112,14 +113,14 @@ up to the user to ensure the result is valid HTML
 
 ## Use examples
 
-The following command reads the data in `test/test.csv` and writes an HTML table that corresponds to the data to `test.html`:
+This command reads data from `test/test.csv` and writes an HTML table to `test.html`:
 
 ```sh
 csv2html -o test.html tests/test.csv
 ```
 
 The following command takes semicolon-delimited data from `pub.csv`, starting with row 267.
-The first column of the table is replaced with the row number starting at 1 (except in the header row, which is untouched).
+It replaces the first column of the table with the row number starting at 1 (except in the header row, which is not changed).
 The output is redirected to the file `pub.html`.
 
 ```sh
