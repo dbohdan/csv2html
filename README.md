@@ -14,7 +14,7 @@ They are attached to releases on the ["Releases"](https://github.com/dbohdan/csv
 
 ### Installing with Cargo
 
-```shell
+```sh
 cargo install csv2html
 ```
 
@@ -75,7 +75,7 @@ linker = "/usr/bin/i686-w64-mingw32-gcc"
 4\. Clone this repository.
     Build the binary.
 
-```
+```sh
 git clone https://github.com/dbohdan/csv2html
 cd csv2html
 just release-windows
