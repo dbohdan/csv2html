@@ -1,3 +1,5 @@
+set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
+
 export CSV2HTML_COMMAND := 'target/debug/csv2html'
 
 default: test
