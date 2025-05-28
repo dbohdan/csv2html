@@ -1,5 +1,5 @@
-// Integration tests for csv2html.
-// Copyright (c) 2013-2014, 2017, 2020, 2021, 2024 D. Bohdan.
+// End-to-end tests for csv2html.
+// Copyright (c) 2013-2014, 2017, 2020, 2021, 2024-2025 D. Bohdan.
 // License: BSD (3-clause). See the file LICENSE.
 
 use std::{
